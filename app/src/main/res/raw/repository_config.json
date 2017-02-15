@@ -10,6 +10,11 @@
                         "name": "",
                         "column-name": "",
                         "data-type": ""
+                    },
+                    "property": {
+                        "name": "",
+                        "column-name": "",
+                        "data-type": ""
                     }
                 }
             },

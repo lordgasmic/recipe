@@ -39,7 +39,11 @@ public class Repository {
         return null;
     }
 
-    public void loadRepository(List<String> itemDescriptors) {
+    public void deleteItem(String id, String itemDescriptor) {
+
+    }
+
+    protected void loadRepository(List<String> itemDescriptors) {
         for (String itemDescriptor : itemDescriptors) {
             repoMap.put(itemDescriptor, new ArrayList<RepositoryItem>());
         }
