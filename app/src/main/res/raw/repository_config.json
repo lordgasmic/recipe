@@ -1,0 +1,30 @@
+{
+    "repository-template": [
+        {
+            "item-descriptor": {
+                "name": "",
+                "table": {
+                    "name": "",
+                    "id-column-name": "",
+                    "property": {
+                        "name": "",
+                        "column-name": "",
+                        "data-type": ""
+                    }
+                }
+            },
+            "item-descriptor": {
+                "name": "",
+                "table": {
+                    "name": "",
+                    "id-column-name": "",
+                    "property": {
+                        "name": "",
+                        "column-name": "",
+                        "data-type": ""
+                    }
+                }
+            }
+        }
+    ]
+}
