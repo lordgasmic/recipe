@@ -38,6 +38,8 @@ public class RepositoryLoader {
             ItemDescriptor item = itemDescriptors.get(index);
             RecipeDbHelper dbHelper = new RecipeDbHelper(context);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
+            // https://developer.android.com/training/basics/data-storage/databases.html#WriteDbRow
+            // https://developer.android.com/reference/android/database/sqlite/SQLiteQueryBuilder.html
 
 
             MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
