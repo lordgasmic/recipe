@@ -1,5 +1,8 @@
 package com.lordgasmic.recipe.repository;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.JsonReader;
 import android.util.JsonToken;
 
@@ -19,11 +22,13 @@ import java.util.Map;
 public class RepositoryLoader {
 
     private Repository repository;
-    private static List<ItemDescriptor> itemDescriptors;
+    private List<ItemDescriptor> itemDescriptors;
+    private Context context;
 
-    public RepositoryLoader() {
+    public RepositoryLoader(Context context) {
         repository = new Repository(this);
         itemDescriptors = new ArrayList<ItemDescriptor>();
+        this.context = context;
     }
 
     protected RepositoryItem getItem(String id, String itemDescriptor) {
@@ -31,8 +36,15 @@ public class RepositoryLoader {
 
         if (index >= 0) {
             ItemDescriptor item = itemDescriptors.get(index);
+            RecipeDbHelper dbHelper = new RecipeDbHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+
 
             MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
+            mri.setName(item.getName());
+
+
+
             return mri.convertToRepositoryItem();
         }
 
@@ -95,7 +107,7 @@ public class RepositoryLoader {
                 while (reader.hasNext() && reader.peek() == JsonToken.BEGIN_OBJECT) {
                     reader.beginObject();
 
-                    itemDescriptor.setTable(readTable(reader));
+                    itemDescriptor.addTable(readTable(reader));
 
                     reader.endObject();
                 }
@@ -206,7 +218,8 @@ public class RepositoryLoader {
     }
 
     private class MutableRepositoryItemImpl implements MutableRepositoryItem {
-
+        private String repositoryId;
+        private String name;
         private Map<String, Object> properties;
 
         public MutableRepositoryItemImpl() {
@@ -218,23 +231,33 @@ public class RepositoryLoader {
         }
 
         @Override
-        public void setProperty(String id, Object object) {
+        public void setRepositoryId(String id) {
+            repositoryId = id;
+        }
 
+        @Override
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void setProperty(String id, Object object) {
+            properties.put(id, object);
         }
 
         @Override
         public String getRepositoryId() {
-            return null;
+            return repositoryId;
         }
 
         @Override
         public String getName() {
-            return null;
+            return name;
         }
 
         @Override
         public Object getProperty(String property) {
-            return null;
+            return properties.get(property);
         }
 
         public Map<String, Object> getProperties() {
@@ -242,10 +265,34 @@ public class RepositoryLoader {
         }
     }
 
+    private class RecipeDbHelper extends SQLiteOpenHelper {
+
+        public static final int DATABASE_VERSION = 1;
+        public static final String DATABASE_NAME = "Recipe.db";
+
+        public RecipeDbHelper(Context context) {
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            onUpgrade(db, oldVersion, newVersion);
+        }
+    }
+
     private class ItemDescriptor {
 
         private String name;
-        private Table table = new Table();
+        private List<Table> tables;
+
+        public ItemDescriptor() {
+            tables = new ArrayList<>();
+        }
 
         public void setName(String name) {
             this.name = name;
@@ -254,12 +301,12 @@ public class RepositoryLoader {
             return name;
         }
 
-        public Table getTable() {
-            return table;
+        public List<Table> getTables() {
+            return tables;
         }
 
-        public void setTable(Table table) {
-            this.table = table;
+        public void addTable(Table table) {
+            tables.add(table);
         }
     }
 
