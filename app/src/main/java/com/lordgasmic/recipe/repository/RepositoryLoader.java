@@ -3,11 +3,6 @@ package com.lordgasmic.recipe.repository;
 import android.util.JsonReader;
 import android.util.JsonToken;
 
-
-import org.json.JSONTokener;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,14 +19,23 @@ import java.util.Map;
 public class RepositoryLoader {
 
     private Repository repository;
-    private List<String> itemDescriptors;
+    private static List<ItemDescriptor> itemDescriptors;
 
     public RepositoryLoader() {
-        repository = new Repository();
-        itemDescriptors = new ArrayList<>();
+        repository = new Repository(this);
+        itemDescriptors = new ArrayList<ItemDescriptor>();
     }
 
-    protected static RepositoryItem getItem(String id, String itemDescriptor) {
+    protected RepositoryItem getItem(String id, String itemDescriptor) {
+        int index = itemDescriptors.contains(itemDescriptor) ? itemDescriptors.indexOf(itemDescriptor) : -1;
+
+        if (index >= 0) {
+            ItemDescriptor item = itemDescriptors.get(index);
+
+            MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
+            return mri.convertToRepositoryItem();
+        }
+
         return null;
     }
 
@@ -39,89 +43,227 @@ public class RepositoryLoader {
         try {
             JsonReader reader = new JsonReader(new InputStreamReader(inputStream));
 
-            readJson(reader, "");
-        }
-        catch (IOException e) {
+            readJson(reader);
+
+            for (ItemDescriptor id : itemDescriptors) {
+                System.out.println(id.getName());
+            }
+        } catch (IOException e) {
             throw new IllegalArgumentException("Unable to read config", e);
         }
     }
 
-    private void readJson(JsonReader reader, String whoCalledMe) throws IOException {
-        String name = reader.nextName();
-        System.out.println(name);
-        if ("repository-template".equals(name)) {
-            reader.beginArray();
+    private void readJson(JsonReader reader) throws IOException {
+        if (reader.peek() == JsonToken.BEGIN_OBJECT) {
             reader.beginObject();
 
-            readJson(reader, name);
+            String name = reader.nextName();
+            if ("item-descriptor".equals(name)) {
+                reader.beginArray();
 
-            reader.endObject();
-            reader.endArray();
-        }
-        else if ("item-descriptor".equals(name)) {
-            reader.beginObject();
+                while (reader.hasNext() && reader.peek() == JsonToken.BEGIN_OBJECT) {
+                    reader.beginObject();
 
-            readJson(reader, name);
+                    itemDescriptors.add(readItemDescriptor(reader));
 
-            reader.endObject();
-        }
-        else if ("table".equals(name)) {
-            reader.beginObject();
+                    reader.endObject();
+                }
 
-            readJson(reader, name);
-
-            reader.endObject();
-        }
-        else if ("id-column-name".equals(name)) {
-
-        }
-        else if ("property".equals(name)) {
-            reader.beginObject();
-
-            readJson(reader, name);
-
-            reader.endObject();
-        }
-        else if ("column-name".equals(name)) {
-
-        }
-        else if ("data-type".equals(name)) {
-
-        }
-        else if ("name".equals(name)) {
-            if (whoCalledMe.equals("item-descriptor")) {
-
+                reader.endArray();
             }
-            else if (whoCalledMe.equals("table")) {
 
+            reader.endObject();
+        }
+    }
+
+    public ItemDescriptor readItemDescriptor(JsonReader reader) throws IOException {
+        ItemDescriptor itemDescriptor = new ItemDescriptor();
+        boolean readName = false;
+        boolean readTable = false;
+
+        while (reader.hasNext()) {
+            if (readName && readTable) {
+                break;
             }
-            else if (whoCalledMe.equals("property")) {
 
+            String name = reader.nextName();
+            if ("name".equals(name)) {
+                String mName = reader.nextString();
+                itemDescriptor.setName(mName);
+
+                readName = true;
+            } else if ("table".equals(name)) {
+                reader.beginArray();
+
+                while (reader.hasNext() && reader.peek() == JsonToken.BEGIN_OBJECT) {
+                    reader.beginObject();
+
+                    itemDescriptor.setTable(readTable(reader));
+
+                    reader.endObject();
+                }
+
+                reader.endArray();
+
+                readTable = true;
             }
         }
 
+        return itemDescriptor;
+    }
 
+    public Table readTable(JsonReader reader) throws IOException {
+        Table table = new Table();
+        boolean readName = false;
+        boolean readIdName = false;
+        boolean readProperty = false;
+
+        while (reader.hasNext()) {
+            if (readName && readIdName && readProperty) {
+                break;
+            }
+
+            String name = reader.nextName();
+            if ("name".equals(name)) {
+                String mName = reader.nextString();
+                System.out.println(mName);
+                table.setName(mName);
+                readName = true;
+            } else if ("id-column-name".equals(name)) {
+                String idColumnName = reader.nextString();
+                table.setIdColumn(idColumnName);
+                readIdName = true;
+            } else if ("properties".equals(name)) {
+                reader.beginArray();
+
+                while (reader.hasNext() && reader.peek() == JsonToken.BEGIN_OBJECT) {
+                    reader.beginObject();
+
+                    table.addProperty(readProperty(reader));
+
+                    reader.endObject();
+                }
+
+                reader.endArray();
+
+                readProperty = true;
+            }
+        }
+
+        return table;
+    }
+
+    public Property readProperty(JsonReader reader) throws IOException {
+        Property property = new Property();
+        boolean readName = false;
+        boolean readColumn = false;
+        boolean readData = false;
+
+        while (reader.hasNext()) {
+            if (readName && readColumn && readData) {
+                break;
+            }
+
+            String name = reader.nextName();
+            if ("name".equals(name)) {
+                String mName = reader.nextString();
+                readName = true;
+            } else if ("column-name".equals(name)) {
+                String columnName = reader.nextString();
+                property.setColumnName(columnName);
+                readColumn = true;
+            } else if ("data-type".equals(name)) {
+                String dataType = reader.nextString();
+                property.setDataType(dataType);
+                readData = false;
+            }
+        }
+
+        return property;
+    }
+
+    private class RepositoryItemImpl implements RepositoryItem {
+        private String repositoryId;
+        private String name;
+        private Map<String, Object> properties;
+
+        public RepositoryItemImpl(MutableRepositoryItemImpl mri) {
+            repositoryId = mri.getRepositoryId();
+            name = mri.getName();
+            properties = mri.getProperties();
+        }
+
+        @Override
+        public String getRepositoryId() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public Object getProperty(String property) {
+            return null;
+        }
+    }
+
+    private class MutableRepositoryItemImpl implements MutableRepositoryItem {
+
+        private Map<String, Object> properties;
+
+        public MutableRepositoryItemImpl() {
+            properties = new HashMap<>();
+        }
+
+        public RepositoryItem convertToRepositoryItem() {
+            return new RepositoryItemImpl(this);
+        }
+
+        @Override
+        public void setProperty(String id, Object object) {
+
+        }
+
+        @Override
+        public String getRepositoryId() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public Object getProperty(String property) {
+            return null;
+        }
+
+        public Map<String, Object> getProperties() {
+            return properties;
+        }
     }
 
     private class ItemDescriptor {
 
         private String name;
-        private Table table;
+        private Table table = new Table();
 
-        public ItemDescriptor(String name) {
+        public void setName(String name) {
             this.name = name;
         }
-
         public String getName() {
             return name;
         }
 
-        public void setTable(String tableName) {
-            table = new Table(tableName);
-        }
-
         public Table getTable() {
             return table;
+        }
+
+        public void setTable(Table table) {
+            this.table = table;
         }
     }
 
@@ -131,22 +273,24 @@ public class RepositoryLoader {
         private String idColumn;
         private List<Property> properties;
 
-        public Table(String name) {
-            this.name = name;
-
+        public Table() {
             properties = new ArrayList<>();
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
         public String getName() {
             return name;
         }
 
-        public void setIdColumn(String idColumn) {
-            this.idColumn = idColumn;
-        }
-
         public String getIdColumn() {
             return idColumn;
+        }
+
+        public void setIdColumn(String idColumn) {
+            this.idColumn = idColumn;
         }
 
         public void addProperty(Property property) {
@@ -164,7 +308,7 @@ public class RepositoryLoader {
         private String columnName;
         private String dataType;
 
-        public Property(String name) {
+        public void setName(String name) {
             this.name = name;
         }
 

@@ -1,35 +1,62 @@
 {
-    "repository-template": [
+    "item-descriptor": [
         {
-            "item-descriptor": {
-                "name": "",
-                "table": {
-                    "name": "",
+            "name": "recipe",
+            "table": [
+                {
+                    "name": "table1",
                     "id-column-name": "",
-                    "property": {
-                        "name": "",
-                        "column-name": "",
-                        "data-type": ""
-                    },
-                    "property": {
-                        "name": "",
-                        "column-name": "",
-                        "data-type": ""
-                    }
-                }
-            },
-            "item-descriptor": {
-                "name": "",
-                "table": {
-                    "name": "",
+                    "properties":  [
+                        {
+                            "name": "",
+                            "column-name": "",
+                            "data-type": ""
+                        },
+                        {
+                            "name": "",
+                            "column-name": "",
+                            "data-type": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "table2",
                     "id-column-name": "",
-                    "property": {
-                        "name": "",
-                        "column-name": "",
-                        "data-type": ""
-                    }
+                    "properties":  [
+                        {
+                            "name": "",
+                            "column-name": "",
+                            "data-type": ""
+                        },
+                        {
+                            "name": "",
+                            "column-name": "",
+                            "data-type": ""
+                        }
+                    ]
                 }
-            }
+            ]
+        },
+        {
+            "name": "inventory",
+            "table": [
+                {
+                    "name": "table3",
+                    "id-column-name": "",
+                    "properties":  [
+                        {
+                            "name": "",
+                            "column-name": "",
+                            "data-type": ""
+                        },
+                        {
+                            "name": "",
+                            "column-name": "",
+                            "data-type": ""
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

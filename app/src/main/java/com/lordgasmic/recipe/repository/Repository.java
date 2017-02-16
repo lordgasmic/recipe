@@ -11,9 +11,11 @@ import java.util.Map;
 
 public class Repository {
 
-    private Map<String,List<RepositoryItem>> repoMap;
+    private RepositoryLoader repositoryLoader;
+    private Map<String, List<RepositoryItem>> repoMap;
 
-    public Repository(){
+    public Repository(RepositoryLoader loader){
+        repositoryLoader = loader;
         repoMap = new HashMap<>();
     }
 
@@ -30,7 +32,7 @@ public class Repository {
             }
         }
 
-        RepositoryItem item = RepositoryLoader.getItem(id, itemDescriptor);
+        RepositoryItem item = repositoryLoader.getItem(id, itemDescriptor);
         if (item != null) {
             items.add(item);
             return item;

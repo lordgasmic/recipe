@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                //RepositoryLoader.readConfig(getResources().openRawResource(R.raw.repository_config));
-                RepositoryLoader.readConfig(getResources().openRawResource(R.raw.repository_config));
+                RepositoryLoader rl = new RepositoryLoader();
+                rl.readConfig(getResources().openRawResource(R.raw.repository_config));
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
