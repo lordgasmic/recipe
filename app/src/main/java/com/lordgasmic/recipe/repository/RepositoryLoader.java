@@ -45,9 +45,6 @@ public class RepositoryLoader {
 
             readJson(reader);
 
-            for (ItemDescriptor id : itemDescriptors) {
-                System.out.println(id.getName());
-            }
         } catch (IOException e) {
             throw new IllegalArgumentException("Unable to read config", e);
         }
@@ -126,7 +123,6 @@ public class RepositoryLoader {
             String name = reader.nextName();
             if ("name".equals(name)) {
                 String mName = reader.nextString();
-                System.out.println(mName);
                 table.setName(mName);
                 readName = true;
             } else if ("id-column-name".equals(name)) {
