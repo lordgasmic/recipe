@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE gsa-template
+    PUBLIC "-//Art Technology Group, Inc.//DTD General SQL Adapter//EN" >
+<gsa-template>
+    <header>
+        <name>User Repository</name>
+        <author>McFadyen</author>
+    </header>
+
+    <item-descriptor name="user" item-cache-size="20000" query-cache-size="1000" cache-mode="simple"
+        item-expire-timeout="5340000">
+        <table name="dps_user" type="primary">
+            <property category-resource="categoryLogin" name="password" data-type="string" required="false" column-name="password"
+                cache-mode="disabled" editor-class="atg.beans.PasswordPropertyEditor" display-name-resource="password" xml-combine="replace">
+            </property>
+        </table>
+
+        <!-- Removing unused attributes from repo definition -->
+        <table name="dcs_user">
+            <property name="myApprovalRequired" xml-combine="remove" />
+        </table>
+        <property name="TEMPMEMBERFLAG" xml-combine="remove" />
+        <property name="trackingId" data-type="string"/>
+    </item-descriptor>
+
+    <item-descriptor name="notificationRecipientOld" display-name="Notification Recipient Old" cache-mode="distributedJMS"
+        item-cache-size="20000" query-cache-size="1000">
+        <table name="GFS_NOTIFICATION_RECIPIENTS" type="primary" id-column-name="NOTIFICATION_RECIPIENT_SK">
+            <property name="id" data-type="string" column-name="NOTIFICATION_RECIPIENT_SK">
+                <attribute name="uiwritable" value="false" />
+            </property>
+            <property name="notificationType" column-name="NOTIFICATION_TYPE_CODE" data-type="enumerated">
+                <attribute name="useCodeForValue" value="false" />
+                <option value="ORDER_SUBMISSION" code="1" />
+            </property>
+            <property name="recipientType" column-name="RECIPIENT_TYPE_CODE" data-type="enumerated">
+                <attribute name="useCodeForValue" value="false" />
+                <option value="TEXT_MESSAGE" code="1" />
+                <option value="EMAIL" code="2" />
+            </property>
+            <property name="recipientDetail" column-name="RECIPIENT_DETAIL" data-type="string" />
+            <property name="otherTextMessageEmail" column-name="OTHER_TEXT_MSG_EMAIL" data-type="string" />
+            <property name="textMessageCarrier" column-name="TEXT_MSG_CARRIER_SK" item-type="textMessageCarrier" />
+        </table>
+    </item-descriptor>
+
+
+    <item-descriptor name="textMessageCarrier" display-name="Text Message Carrier" cache-mode="distributedJMS"
+        item-cache-size="20000" query-cache-size="1000">
+        <table name="GFS_TEXT_MSG_CARRIER" type="primary" id-column-name="TEXT_MSG_CARRIER_SK">
+            <property name="carrierCode" column-name="TEXT_MSG_CARRIER_SK" data-type="string" />
+            <property name="carrierDisplayName" column-name="CARRIER_NAME" data-type="string" />
+            <property name="textMessageEmail" column-name="TEXT_MSG_EMAIL" data-type="string" />
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="notificationRecipient" display-name="Notification Recipient" cache-mode="distributedJMS"
+        item-cache-size="20000" query-cache-size="1000">
+        <table name="GFS_NOTIFICATION_RECIPIENT" type="primary" id-column-name="NOTIFICATION_RECIPIENT_SK">
+            <property name="id" data-type="string" column-name="NOTIFICATION_RECIPIENT_SK">
+                <attribute name="uiwritable" value="false" />
+            </property>
+            <property name="recipientType" column-name="RECIPIENT_TYPE_SK" item-type="recipientType" required="true"/>
+            <property name="recipientDetail" column-name="RECIPIENT_DETAIL" data-type="string" required="true"/>
+            <property name="language" column-name="LANGUAGE_TYPE_CODE" data-type="string"/>
+        </table>
+        <table name="GFS_NOTFN_RCPNT_NOTFN_TYPE" type="multi" id-column-name="NOTIFICATION_RECIPIENT_SK">
+            <property name="notificationTypes" column-name="NOTIFICATION_TYPE_SK" data-type="set" component-item-type="notificationType"/>
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="recipientType">
+        <table name="GFS_RECIPIENT_TYPE" type="primary" id-column-name="RECIPIENT_TYPE_SK">
+            <property name="type" column-name="TYPE" data-type="string" required="true"/>
+        </table>
+        <table name="GFS_RCPNT_TYPE_NOTFN_TYPE" type="multi" id-column-name="RECIPIENT_TYPE_SK">
+            <property name="avaialbleNotificationTypes" column-name="NOTIFICATION_TYPE_SK" data-type="set" component-item-type="notificationType"/>
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="notificationType">
+        <table name="GFS_NOTIFICATION_TYPE" type="primary" id-column-name="NOTIFICATION_TYPE_SK">
+            <property name="type" column-name="TYPE" data-type="string" required="true"/>
+            <property name="displaySeq" column-name="DISPLAY_SEQ" data-type="int" />
+        </table>
+        <table name="GFS_NOTIFICATION_TYPE_LANG" type="multi" multi-column-name="LANGUAGE_TYPE_CODE" id-column-name="NOTIFICATION_TYPE_SK">
+            <property name="translations" cascade="delete" column-name="NTFCN_TYPE_LANG_ATRB_SK" data-type="map" component-item-type="notificationTypeTranslation"/>
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="notificationTypeTranslation">
+        <table name="GFS_NOTFN_LANG_ATTRIBUTE" type="primary" id-column-name="NOTFN_LANG_ATTRIBUTE_SK">
+            <property name="displayName" column-name="NOTIFICATION_TYPE_DESC" data-type="string" required="true"/>
+        </table>
+    </item-descriptor>
+
+
+    <item-descriptor name="userAccountPreference" display-name="User Account Preference"
+        last-modified-property="lastUpdateTimeStamp" cache-mode="simple" item-cache-size="8000" query-cache-size="1000">
+        <attribute name="updateLastModified" value="true" />
+        <attribute name="updateLastModifiedUser" value="lastUpdateUserId" />
+        <table name="GFS_USER_ACCOUNT_PREF_ATTRB" type="primary" id-column-name="USER_ACCOUNT_PREF_ATTRB_SK">
+            <property name="id" data-type="string" column-name="USER_ACCOUNT_PREF_ATTRB_SK">
+                <attribute name="uiwritable" value="false" />
+            </property>
+            <property name="landingPage" column-name="LANDING_PAGE_CODE" data-type="enumerated">
+                <attribute name="useCodeForValue" value="false" />
+                <option value="ORDER_GUIDE" code="1" />
+                <option value="CATALOG" code="2" />
+                <option value="TEN_KEY" code="3" />
+                <option value="MY_LIST" code="4" />
+            </property>
+            <property name="landingList" column-name="LANDING_PAGE_MYLIST_ID" data-type="string" />
+            <property name="defaultParList" column-name="DEFAULT_PAR_LIST_ID" data-type="string" />
+            <property name="lastUpdateTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+            <property name="lastUpdateUserId" column-name="LAST_UPDATE_USER_ID" property-type="com.gfs.ecom.common.LastUpdateUserIdPropertyDescriptor"
+                data-type="string" required="true" />
+            <property name="primarySearchListType" column-name="PRIMARY_SRCH_LIST_TYPE_CODE" data-type="enumerated">
+                <attribute name="useCodeForValue" value="false" />
+                <option value="ORDER_GUIDE" code="1" />
+                <option value="CATALOG" code="2" />
+                <option value="MY_LIST" code="4" />
+            </property>
+            <property name="primarySearchListId" column-name="PRIMARY_SRCH_LIST_ID" data-type="string" />
+        </table>
+
+        <table name="GFS_USER_PREF_STORES" type="multi" id-column-name="USER_ACCOUNT_PREF_ATTRB_SK">
+            <property name="preferredStores" column-name="USER_STORE_INFO_SK" data-type="set"
+                component-item-type="userStoreInfo" required="false" cascade="delete" />
+        </table>
+
+        <table name="GFS_HIDDEN_RECOMM_PROD_LIST" type="multi" id-column-name="USER_ACCOUNT_PREF_ATTRB_SK">
+            <property name="hiddenRecommendedProductList" column-name="HIDDEN_RECOMM_PRODUCT_SK" data-type="set"
+                component-item-type="hiddenRecommendedProduct" required="false" cascade="delete" />
+        </table>
+
+    </item-descriptor>
+
+    <item-descriptor name="userStoreInfo" display-name="User Store Info" cache-mode="distributedJMS"
+        item-cache-size="100000" query-cache-size="1000">
+        <table name="GFS_USER_STORE_INFO" type="primary" id-column-name="USER_STORE_INFO_SK">
+            <property name="storeId" column-name="STORE_ID_SK" data-type="string"/>
+            <property name="lastUpdated" column-name="LAST_UPDATED" data-type="long"/>
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="hiddenRecommendedProduct" display-name="User Store Info" cache-mode="distributedJMS"
+        item-cache-size="100000" query-cache-size="1000">
+        <table name="GFS_HIDDEN_RECOMMENDED_PRODUCT" type="primary" id-column-name="HIDDEN_RECOMM_PRODUCT_SK">
+            <property name="recommendedProductId" column-name="RECOMMENDED_PRODUCT_ID" data-type="string"/>
+            <property name="lastUpdateTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="distribution-user" super-type="user" sub-type-value="distribution-user"
+        id-space-name="user" display-name="Distribution User" cache-mode="distributedJMS" item-cache-size="20000" item-expire-timeout="5340000"
+        query-cache-size="1000" last-modified-property="lastUpdateTimeStamp">
+        <attribute name="updateLastModified" value="true" />
+        <attribute name="updateLastModifiedUser" value="lastUpdateUserId" />
+        <table name="GFS_DISTRIBUTION_USER" type="auxiliary" id-column-name="USER_ID">
+            <property name="termsAcceptedTimeStamp" column-name="TERMS_ACCEPTED_TMSTMP" data-type="timestamp" />
+            <property name="shoppingCartSortField" column-name="CART_SORT_FIELD_CODE" data-type="enumerated">
+                <attribute name="useCodeForValue" value="false" />
+                <option value="AS_ADDED" code="1" />
+                <option value="DESCRIPTION" code="2" />
+                <option value="ITEM_CODE_ASC" code="3" />
+                <option value="ITEM_CODE_DESC" code="4" />
+            </property>
+            <property name="enableDuplicateTenKeyItemWarning" column-name="DUP_TEN_KEY_ITEM_WARNING_IND" data-type="enumerated">
+                <attribute name="useCodeForValue" value="false" />
+                <option value="true" code="1" />
+                <option value="false" code="0" />
+            </property>
+            <property name="lastUpdateTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+            <property name="lastUpdateUserId" column-name="LAST_UPDATE_USER_ID" property-type="com.gfs.ecom.common.LastUpdateUserIdPropertyDescriptor"
+                data-type="string" required="true" />
+        </table>
+        <table name="GFS_USER_TEN_KEY_MAP" type="multi" id-column-name="USER_ID" multi-column-name="CUSTOMER_UNIT_SK">
+            <property name="userTenKeyMap" column-name="TEN_KEY_LIST_SK" data-type="map" component-item-type="tenKeyList"
+                required="true" cascade="delete" />
+        </table>
+        <table name="GFS_USER_ACCOUNT_PREFERENCE" type="multi" id-column-name="USER_ID" multi-column-name="CUSTOMER_UNIT_SK">
+            <property name="userAccountPreferences" column-name="USER_ACCOUNT_PREF_ATTRB_SK" data-type="map"
+                component-item-type="userAccountPreference" required="false" cascade="delete" />
+        </table>
+        <!-- Transient property to identify a punchout user -->
+        <property name="isPunchoutUser" data-type="boolean" />
+    </item-descriptor>
+
+    <item-descriptor name="account" display-name="Account" last-modified-property="lastUpdateTimeStamp"
+        cache-mode="distributedJMS" item-cache-size="200000" query-cache-size="1000">
+        <attribute name="updateLastModified" value="true" />
+        <attribute name="updateLastModifiedUser" value="lastUpdateUserId" />
+        <table name="GFS_CUSTOMER_UNIT" type="primary" id-column-name="CUSTOMER_UNIT_SK">
+            <!-- surrogate key -->
+            <property name="customerUnitId" data-type="string" column-name="CUSTOMER_UNIT_SK" required="true" />
+            <!-- business primary key. To be used for querying unit id -->
+            <property name="gfsCustomerUnitId" data-type="string" column-name="GFS_CUSTOMER_ID" required="true" />
+            <property name="customerName" data-type="string" column-name="CUSTOMER_NAME" />
+            <property name="familyCustomerId" data-type="string" column-name="FAMILY_CUSTOMER_ID" />
+            <property name="pmgCustomerId" data-type="string" column-name="PMG_CUSTOMER_ID" />
+            <property name="superPmgCustomerId" data-type="string" column-name="SUPER_PMG_CUSTOMER_ID" />
+            <property name="companyNbr" data-type="int" column-name="COMPANY_NBR" required="true" />
+            <property name="statusCode" data-type="int" column-name="CUSTOMER_UNIT_STATUS_CODE" required="true" />
+            <property name="customerUnitStoreNbr" data-type="string" column-name="CUSTOMER_UNIT_STORE_NBR" />
+            <property name="shipToSite" data-type="int" column-name="SHIP_TO_SITE_ID" required="true" />
+            <property name="orderGuideNbr" data-type="int" column-name="ORDER_GUIDE_NBR" />
+            <property name="primaryShipDc" item-type="shipDC" column-name="PRIMARY_SHIP_DC_SK"
+                repository="/com/gfs/ecom/common/location/LocationRepository" required="true" />
+            <property name="contactInfo" item-type="contactInfo" column-name="DPS_CONTACT_INFO_ID" />
+            <property name="crmId" data-type="int" column-name="CRM_ID" />
+            <property name="poNumberRequired" column-name="PO_NUMBER_REQUIRED_IND" data-type="enumerated">
+                <attribute name="useCodeForValue" value="false" />
+                <option value="true" code="1" />
+                <option value="false" code="0" />
+            </property>
+            <property name="defaultPONumber" column-name="DEFAULT_PO_NUMBER" data-type="string" />
+            <property name="lastUpdateTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+            <property name="lastUpdateUserId" column-name="LAST_UPDATE_USER_ID" property-type="com.gfs.ecom.common.LastUpdateUserIdPropertyDescriptor"
+                data-type="string" required="true" />
+
+            <property name="storePickUpAllowed" data-type="boolean" column-name="STORE_PICKUP_ALLOWED_IND" required="true" />
+            <property name="defaultToRecentChangesView" column-name="DEFAULT_TO_RECENT_CHANGES_VIEW" data-type="enumerated">
+                <attribute name="useCodeForValue" value="false" />
+                <option value="true" code="1" />
+                <option value="false" code="0" />
+            </property>
+            <property name="customerSegment" data-type="int" column-name="CUSTOMER_SEGMENT"/>
+            <property name="commodityCustomer" data-type="boolean" column-name="COMMODITY_CUSTOMER" default="false" />
+            <property name="raNumber" data-type="string" column-name="RA_NUMBER" />
+
+            <property name="defaultStoreId" data-type="string" column-name="DEFAULT_STORE_ID" required="false" />
+            <property name="customerLoyaltyTier" data-type="string" column-name="CUSTOMER_LOYALTY_TIER" required="false" />
+            <property name="customerPricingMode" data-type="string" column-name="CUSTOMER_PRICING_MODE" required="false" />
+            <property name="primaryChannel" data-type="string" column-name="PRIMARY_CHANNEL" required="false" />
+            <property name="customerLoyaltyEnrolled" data-type="boolean" column-name="CUSTOMER_LOYALTY_ENROLLED_IND"/>
+            <property name="epoAllowed" data-type="boolean" column-name="EPO_ALLOWED_IND"/>
+
+        </table>
+        <table name="GFS_ACCT_NOTIFCTN_RECPNT" type="multi" id-column-name="CUSTOMER_UNIT_SK">
+            <property name="notificationRecipientsOld" column-name="NOTIFICATION_RECIPIENT_SK" data-type="set"
+                component-item-type="notificationRecipientOld" required="false" cascade="delete" />
+        </table>
+        <table name="GFS_ACCT_NOTIFCTN_RECIPNT" type="multi" id-column-name="CUSTOMER_UNIT_SK">
+            <property name="notificationRecipients" column-name="NOTIFICATION_RECIPIENT_SK" data-type="set"
+                component-item-type="notificationRecipient" required="false" cascade="delete" />
+        </table>
+
+
+    </item-descriptor>
+
+    <item-descriptor name="contactInfo"  item-cache-size="200000" query-cache-size="1000" cache-mode="distributedJMS" />
+
+
+    <item-descriptor name="tenKeyList" display-name="Ten Key List" last-modified-property="lastUpdateTimeStamp"
+        cache-mode="distributedJMS" item-cache-size="200000" query-cache-size="1000">
+        <attribute name="updateLastModified" value="true" />
+        <attribute name="updateLastModifiedUser" value="lastUpdateUserId" />
+        <table name="GFS_TEN_KEY_LIST" type="primary" id-column-name="TEN_KEY_LIST_SK">
+            <property name="id" column-name="TEN_KEY_LIST_SK" data-type="string" required="true" />
+            <property name="lastUpdateTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+            <property name="lastUpdateUserId" column-name="LAST_UPDATE_USER_ID" property-type="com.gfs.ecom.common.LastUpdateUserIdPropertyDescriptor"
+                data-type="string" required="true" />
+        </table>
+        <table name="GFS_TEN_KEY_ITEMS" type="multi" multi-column-name="SEQUENCE_NUM" id-column-name="TEN_KEY_LIST_SK">
+            <property name="tenKeyList" column-name="TEN_KEY_ITEM_SK" data-type="list" component-item-type="tenKeyListItem"
+                cascade="delete" />
+        </table>
+    </item-descriptor>
+
+
+    <item-descriptor name="tenKeyListItem" display-name="Ten Key List Item" last-modified-property="lastUpdateTimeStamp"
+        cache-mode="distributedJMS" item-cache-size="200000" query-cache-size="1000">
+        <attribute name="updateLastModified" value="true" />
+        <attribute name="updateLastModifiedUser" value="lastUpdateUserId" />
+        <table name="GFS_TEN_KEY_ITEM" type="primary" id-column-name="TEN_KEY_ITEM_SK">
+            <property name="product" item-type="product" column-name="PRODUCT_ID" repository="/atg/commerce/catalog/ProductCatalog"
+                required="true" />
+            <property name="quantity" data-type="int" column-name="QUANTITY" required="true" />
+            <property name="isLessCase" data-type="boolean" column-name="LESS_CASE_IND" required="true" />
+            <property name="captureMethod" column-name="CAPTURE_METHOD_ID" data-type="enumerated"
+                description="method or screen through which this item is added to the cart/order.">
+                <attribute name="useCodeForValue" value="true" />
+                <option code="1" value="10-Key Data Entry" />
+                <option code="11" value="External Order Transfer" />
+                <option code="12" value="File Upload" />
+            </property>
+            <property name="lastUpdateTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+            <property name="lastUpdateUserId" column-name="LAST_UPDATE_USER_ID" property-type="com.gfs.ecom.common.LastUpdateUserIdPropertyDescriptor"
+                data-type="string" required="true" />
+        </table>
+    </item-descriptor>
+    <item-descriptor name="deliverySchedule" display-name="Delivery Schedule" last-modified-property="lastUpdateTimeStamp"
+        cache-mode="disabled">
+        <attribute name="updateLastModified" value="true" />
+        <table name="GFS_DELIVERY_SCHEDULE" id-column-name="DELIVERY_SCHEDULE_SK" type="primary">
+            <property name="customerUnitId" data-type="string" column-name="GFS_CUSTOMER_ID" required="true" />
+            <property name="deliveryScheduleStatus" data-type="binary" column-name="DELIVERY_SCHEDULE_STATUS" required="true" />
+            <property name="lastUpdateTimeStamp" data-type="timestamp" column-name="LAST_UPDATE_TMSTMP" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+            <property name="lastUpdateUserId" data-type="string" column-name="LAST_UPDATE_USER_ID" required="true" />
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="cmaEntitlement" display-name="CMA Entitlment Info" last-modified-property="lastUpdateTimeStamp"
+        cache-mode="disabled">
+        <attribute name="updateLastModified" value="true" />
+        <table name="GFS_CMA_ENTITLEMENT" id-column-name="ENTITEMENT_DETAIL_SK" type="primary">
+            <property name="customerUnitId" data-type="string" column-name="GFS_CUSTOMER_ID" required="true" />
+            <property name="itemAllocationInfo" data-type="binary" column-name="ITEM_ALLOCATION_INFO" required="true" />
+            <property name="lastUpdateTimeStamp" data-type="timestamp" column-name="LAST_UPDATE_TMSTMP" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+            <property name="lastUpdateUserId" data-type="string" column-name="LAST_UPDATE_USER_ID" required="true" />
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="customerListHistory" display-name="Customer Item List History"  last-modified-property="lastUpdateTimeStamp"
+        cache-mode="distributedJMS" item-cache-size="200000" query-cache-size="1000">
+
+        <table name="GFS_CUST_LIST_HISTORY" type="primary" id-column-name="CUSTOMER_UNIT_ID" >
+            <property name="id" column-name="CUSTOMER_UNIT_ID" data-type="string" required="true" />
+            <property name="lastUpdateTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp" required="true">
+                <attribute name="useNowForDefault" value="true" />
+            </property>
+        </table>
+        <table name="GFS_CUST_LIST_HISTORY_ITEMS" type="multi" id-column-name="CUSTOMER_UNIT_ID">
+            <property name="customerListHistoryItems" column-name="CUST_LIST_HISTORY_ITEM_SK" data-type="set" component-item-type="customerListHistoryItem"
+                cascade="delete" />
+        </table>
+    </item-descriptor>
+
+
+    <item-descriptor name="customerListHistoryItem" display-name="Order Guide Histoty Item"
+        cache-mode="distributedJMS" item-cache-size="200000" query-cache-size="1000">
+
+        <attribute name="updateLastModifiedUser" value="lastUpdateUserId" />
+        <table name="GFS_CUST_LIST_HISTORY_ITEM" type="primary" id-column-name="CUST_LIST_HISTORY_ITEM_SK">
+            <property name="productId" data-type="string" column-name="PRODUCT_ID" required="true" />
+            <property name="itemChangeType" data-type="string" column-name="ITEM_CHANGE_TYPE" required="true" />
+            <property name="updatedTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp">
+
+            </property>
+            <property name="userAction" column-name="USER_ACTION" data-type="enumerated"
+                description="User action Hide/Acknowledge done to items">
+                <attribute name="useCodeForValue" value="true" />
+                <option code="1" value="ACK" />
+                <option code="2" value="HIDE" />
+            </property>
+            <property name="lastUpdateUserId" column-name="LAST_UPDATE_USER_ID" property-type="com.gfs.ecom.common.LastUpdateUserIdPropertyDescriptor"
+                data-type="string" required="true" />
+        </table>
+    </item-descriptor>
+
+    <item-descriptor name="customerProprietaryOffering" last-modified-property="lastUpdateTimeStamp"
+        cache-mode="distributedJMS" item-cache-size="1567680" query-cache-size="50000" display-name-resource="customerProprietaryOffering">
+        <attribute name="cacheNullItems" value="true" />
+        <attribute name="updateLastModified" value="true" />
+        <attribute name="updateLastModifiedUser" value="lastUpdateUserId" />
+        <table name="GFS_CUST_PROPRIETARY_PRODUCT" type="primary" id-column-name="CUST_PROPRIETARY_PRODUCT_SK">
+            <property name="id" data-type="string" column-name="CUST_PROPRIETARY_PRODUCT_SK"
+                display-name-resource="id">
+                <attribute name="uiwritable" value="false" />
+            </property>
+            <property name="productId" column-name="PRODUCT_ID" data-type="string" required="true" />
+            <property name="gfsCustomerId" column-name="GFS_CUSTOMER_ID" data-type="string" required="true" />
+            <property name="gfsCustomerTypeCode" column-name="GFS_CUSTOMER_TYPE_CODE" data-type="int" required="true" />
+            <property name="lastUpdateTimeStamp" column-name="LAST_UPDATE_TMSTMP" data-type="timestamp"
+                required="true" property-type="com.gfs.ecom.common.LastUpdateTimeStampPropertyDescriptor" />
+            <property name="lastUpdateUserId" column-name="LAST_UPDATE_USER_ID" data-type="string" required="true"
+                property-type="com.gfs.ecom.common.LastUpdateUserIdPropertyDescriptor" />
+        </table>
+    </item-descriptor>
+</gsa-template>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE gsa-template  PUBLIC "-//Art Technology Group, Inc.//DTD General SQL Adapter//EN">
+
+<gsa-template>
+
+    <!--/////////////////////////////// -->
+    <!-- purchaseHistorySummary -->
+    <!--/////////////////////////////// -->
+
+    <item-descriptor name="purchaseHistorySummary" display-name="Purchase History" display-property="purchaseId"
+        item-cache-size="2000" item-expire-timeout="3600000" query-cache-size="2000" query-expire-timeout="3600000">
+        <table name="GFS_PURCHASE_HISTORY_SUMMARY" type="primary" id-column-name="PURCHASE_ID">
+            <property name="purchaseId" display-name="Purchase Id" data-type="string" column-name="PURCHASE_ID"
+                required="true">
+                <attribute name="propertySortPriority" value="10" />
+            </property>
+            <property name="organizationId" display-name="Organization Id" data-type="string" column-name="ORGANIZATION_ID"
+                required="true">
+                <attribute name="propertySortPriority" value="20" />
+            </property>
+            <property name="purchaseDate" display-name="Purchase Date" data-type="timestamp" column-name="PURCHASE_DATE"
+                required="true">
+                <attribute name="propertySortPriority" value="30" />
+            </property>
+            <property name="storeId" display-name="Store Id" data-type="string" column-name="STORE_ID"
+                required="true">
+                <attribute name="propertySortPriority" value="40" />
+            </property>
+            <property name="purchaseAmount" display-name="Purchase Amount" data-type="double" column-name="PURCHASE_AMT"
+                required="true">
+                <attribute name="propertySortPriority" value="50" />
+            </property>
+            <property name="loyaltyPoints" display-name="Loyality Points" data-type="int" column-name="LOYALTY_POINTS"
+                required="true">
+                <attribute name="propertySortPriority" value="60" />
+            </property>
+        </table>
+        <table name="GFS_PURCHASE_HISTORY_ITEMS" type="multi" id-column-name="PURCHASE_ID" multi-column-name="SEQ_NUM">
+            <property name="lineItems" display-name="Purchase Line Items" readable="true" writable="true"
+                queryable="true" hidden="false" expert="false" required="false" cache-mode="inherit" data-type="list"
+                component-item-type="purchaseHistoryLineItem" column-names="LINE_ITEM_ID" cascade="delete">
+                <attribute name="propertySortPriority" value="70" />
+            </property>
+        </table>
+    </item-descriptor>
+
+    <!--/////////////////////////////// -->
+    <!-- purchaseHistoryLineItem -->
+    <!--/////////////////////////////// -->
+
+    <item-descriptor name="purchaseHistoryLineItem" display-name="Purchase History Line Item"
+        display-property="lineItemId" item-cache-size="5000" item-expire-timeout="3600000"
+        query-cache-size="5000" query-expire-timeout="3600000">
+        <table name="GFS_PURCHASE_HISTORY_LINE_ITEM" type="primary" id-column-names="LINE_ITEM_ID">
+            <property name="lineItemId" display-name="Line Item Id" data-type="string" column-name="LINE_ITEM_ID"
+                required="true">
+                <attribute name="propertySortPriority" value="10" />
+            </property>
+            <property name="lineItemNum" display-name="Line Item Num" data-type="int" column-name="LINE_ITEM_NUM"
+                required="true">
+                <attribute name="propertySortPriority" value="20" />
+            </property>
+            <property name="skuId" display-name="Sku Id" data-type="string" column-name="SKU_ID" required="true">
+                <attribute name="propertySortPriority" value="30" />
+            </property>
+            <property name="purchasedQty" display-name="Qty Purchased" data-type="int" column-name="QTY_PURCHASED"
+                required="false">
+                <attribute name="propertySortPriority" value="40" />
+            </property>
+            <property name="purchasedWeight" display-name="Weight Purchased" data-type="double" column-name="WEIGHT_PURCHASED"
+                required="false">
+                <attribute name="propertySortPriority" value="50" />
+            </property>
+        </table>
+    </item-descriptor>
+
+</gsa-template>

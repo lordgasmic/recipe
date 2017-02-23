@@ -1,6 +1,7 @@
 package com.lordgasmic.recipe.repository;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.JsonReader;
@@ -32,12 +33,25 @@ public class RepositoryLoader {
     }
 
     protected RepositoryItem getItem(String id, String itemDescriptor) {
-        int index = itemDescriptors.contains(itemDescriptor) ? itemDescriptors.indexOf(itemDescriptor) : -1;
+        int index = -1;
+        for (ItemDescriptor descriptor : itemDescriptors) {
+            System.out.println(descriptor.getName());
+            if (descriptor.getName().equals(itemDescriptor)) {
+                index = itemDescriptors.indexOf(descriptor);
+                break;
+            }
+        }
 
+        System.out.println(index);
         if (index >= 0) {
             ItemDescriptor item = itemDescriptors.get(index);
             RecipeDbHelper dbHelper = new RecipeDbHelper(context);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor c = db.rawQuery("Select * from uom", null);
+
+            while (c.moveToNext()) {
+                System.out.println(c.getString(0));
+            }
 
 
             MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
@@ -270,19 +284,37 @@ public class RepositoryLoader {
         public static final int DATABASE_VERSION = 1;
         public static final String DATABASE_NAME = "Recipe.db";
 
+        private static final String CREATE_RECIPE = "";
+        private static final String CREATE_RECIPE_DIRECTION = "";
+        private static final String CREATE_RECIPE_INGREDIENT = "";
+        private static final String CREATE_ITEM = "";
+        private static final String CREATE_INVENTORY = "";
+        private static final String CREATE_UOM = "create table uom (name varchar(255) not null primary key)";
+
+        private static final String INSERT_UOM = "insert into uom values (\"tbl\")";
+
+
         public RecipeDbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            db.execSQL(CREATE_UOM);
+            db.execSQL(CREATE_ITEM);
+            db.execSQL(CREATE_INVENTORY);
+            db.execSQL(CREATE_RECIPE);
+            db.execSQL(CREATE_RECIPE_DIRECTION);
+            db.execSQL(CREATE_RECIPE_INGREDIENT);
 
+            db.execSQL(INSERT_UOM);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             onUpgrade(db, oldVersion, newVersion);
         }
+
     }
 
     private class ItemDescriptor {

@@ -1,37 +1,133 @@
 {
     "item-descriptor": [
         {
+            "name": "item",
+            "table": [
+                {
+                    "name": "item",
+                    "id-column-name": "itemId",
+                    "properties":  [
+                        {
+                            "name": "itemId",
+                            "column-name": "itemId",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "name",
+                            "column-name": "name",
+                            "data-type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "uom",
+            "table": [
+                {
+                    "name": "uom",
+                    "id-column-name": "name",
+                    "properties":  [
+                        {
+                            "name": "name",
+                            "column-name": "name",
+                            "data-type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "recipeDirection",
+            "table": [
+                {
+                    "name": "recipeDirection",
+                    "id-column-name": "recipe_direction_id",
+                    "properties":  [
+                        {
+                            "name": "recipeDirectionId",
+                            "column-name": "recipe_direction_id",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "direction",
+                            "column-name": "direction",
+                            "data-type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "recipe",
             "table": [
                 {
-                    "name": "table1",
-                    "id-column-name": "",
+                    "name": "recipe",
+                    "id-column-name": "recipeId",
                     "properties":  [
                         {
-                            "name": "",
-                            "column-name": "",
-                            "data-type": ""
+                            "name": "id",
+                            "column-name": "recipeId",
+                            "data-type": "string"
                         },
                         {
-                            "name": "",
-                            "column-name": "",
-                            "data-type": ""
+                            "name": "name",
+                            "column-name": "name",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "description",
+                            "column-name": "description",
+                            "data-type": "string"
                         }
                     ]
                 },
                 {
-                    "name": "table2",
-                    "id-column-name": "",
+                    "name": "recipe_ingredient_list",
+                    "id-column-name": "recipeId",
                     "properties":  [
                         {
-                            "name": "",
-                            "column-name": "",
-                            "data-type": ""
+                            "name": "recipeId",
+                            "column-name": "recipeId",
+                            "data-type": "string"
                         },
                         {
-                            "name": "",
-                            "column-name": "",
-                            "data-type": ""
+                            "name": "itemId",
+                            "column-name": "itemId",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "quantity",
+                            "column-name": "quantity",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "unitOfMeasure",
+                            "column-name": "unit_of_measure",
+                            "data-type": "uom"
+                        }
+                    ]
+                },
+                {
+                    "name": "recipe_description_list",
+                    "id-column-name": "recipeId",
+                    "multi-column-name": "sequence_number",
+                    "data-type": "list",
+                    "properties":  [
+                        {
+                            "name": "recipeId",
+                            "column-name": "recipeId",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "directionOrder",
+                            "column-name": "order",
+                            "data-type": "int"
+                        },
+                        {
+                            "name": "direction",
+                            "column-name": "direction",
+                            "data-type": "string"
                         }
                     ]
                 }
@@ -41,18 +137,33 @@
             "name": "inventory",
             "table": [
                 {
-                    "name": "table3",
-                    "id-column-name": "",
+                    "name": "inventory",
+                    "id-column-name": "itemId",
                     "properties":  [
                         {
-                            "name": "",
-                            "column-name": "",
-                            "data-type": ""
+                            "name": "item",
+                            "column-name": "itemId",
+                            "data-type": "item"
                         },
                         {
-                            "name": "",
-                            "column-name": "",
-                            "data-type": ""
+                            "name": "quantity",
+                            "column-name": "quantity",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "unitOfMeasure",
+                            "column-name": "unit_of_measure",
+                            "data-type": "uom"
+                        },
+                        {
+                            "name": "parQuantity",
+                            "column-name": "par_quantity",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "parUnitOfMeasure",
+                            "column-name": "par_unit_of_measure",
+                            "data-type": "uom"
                         }
                     ]
                 }
