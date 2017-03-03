@@ -26,11 +26,16 @@
             "table": [
                 {
                     "name": "uom",
-                    "id-column-name": "name",
+                    "id-column-name": "short_name",
                     "properties":  [
                         {
-                            "name": "name",
-                            "column-name": "name",
+                            "name": "short_name",
+                            "column-name": "short_name",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "long_name",
+                            "column-name": "long_name",
                             "data-type": "string"
                         }
                     ]
@@ -135,7 +140,7 @@
                     ]
                 },
                 {
-                    "name": "recipe_description_list",
+                    "name": "recipe_direction_list",
                     "id-column-name": "recipeId",
                     "multi-column-name": "sequence_number",
                     "data-type": "list",
