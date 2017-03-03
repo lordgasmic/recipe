@@ -38,10 +38,10 @@
             ]
         },
         {
-            "name": "recipeDirection",
+            "name": "direction",
             "table": [
                 {
-                    "name": "recipeDirection",
+                    "name": "direction",
                     "id-column-name": "recipe_direction_id",
                     "properties":  [
                         {
@@ -53,6 +53,32 @@
                             "name": "direction",
                             "column-name": "direction",
                             "data-type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ingredient",
+            "table": [
+                {
+                    "name": "ingredient",
+                    "id-column-name": "recipe_ingredient_id",
+                    "properties":  [
+                        {
+                            "name": "recipeIngredientId",
+                            "column-name": "recipe_ingredient_id",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "itemId",
+                            "column-name": "itemId",
+                            "data-type": "item"
+                        },
+                        {
+                            "name": "uom",
+                            "column-name": "uom",
+                            "data-type": "uom"
                         }
                     ]
                 }
