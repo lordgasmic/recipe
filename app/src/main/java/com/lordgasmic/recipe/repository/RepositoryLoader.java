@@ -1,12 +1,17 @@
 package com.lordgasmic.recipe.repository;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.JsonReader;
 import android.util.JsonToken;
 
+import com.lordgasmic.recipe.R;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,11 +30,15 @@ public class RepositoryLoader {
     private Repository repository;
     private List<ItemDescriptor> itemDescriptors;
     private Context context;
+    private Resources resources;
 
-    public RepositoryLoader(Context context) {
+    public RepositoryLoader(Context context, Resources resources) {
         repository = new Repository(this);
         itemDescriptors = new ArrayList<ItemDescriptor>();
         this.context = context;
+        this.resources = resources;
+
+        readConfig(resources.openRawResource(R.raw.repository_config));
     }
 
     protected RepositoryItem getItem(String id, String itemDescriptor) {
@@ -45,7 +54,7 @@ public class RepositoryLoader {
         System.out.println(index);
         if (index >= 0) {
             ItemDescriptor item = itemDescriptors.get(index);
-            RecipeDbHelper dbHelper = new RecipeDbHelper(context);
+            RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor c = db.rawQuery("Select * from uom", null);
 
@@ -65,7 +74,7 @@ public class RepositoryLoader {
         return null;
     }
 
-    public void readConfig(InputStream inputStream) {
+    private void readConfig(InputStream inputStream) {
         try {
             JsonReader reader = new JsonReader(new InputStreamReader(inputStream));
 
@@ -99,7 +108,7 @@ public class RepositoryLoader {
         }
     }
 
-    public ItemDescriptor readItemDescriptor(JsonReader reader) throws IOException {
+    private ItemDescriptor readItemDescriptor(JsonReader reader) throws IOException {
         ItemDescriptor itemDescriptor = new ItemDescriptor();
         boolean readName = false;
         boolean readTable = false;
@@ -135,7 +144,7 @@ public class RepositoryLoader {
         return itemDescriptor;
     }
 
-    public Table readTable(JsonReader reader) throws IOException {
+    private Table readTable(JsonReader reader) throws IOException {
         Table table = new Table();
         boolean readName = false;
         boolean readIdName = false;
@@ -184,7 +193,7 @@ public class RepositoryLoader {
         return table;
     }
 
-    public Property readProperty(JsonReader reader) throws IOException {
+    private Property readProperty(JsonReader reader) throws IOException {
         Property property = new Property();
         boolean readName = false;
         boolean readColumn = false;
@@ -226,17 +235,17 @@ public class RepositoryLoader {
 
         @Override
         public String getRepositoryId() {
-            return null;
+            return repositoryId;
         }
 
         @Override
         public String getName() {
-            return null;
+            return name;
         }
 
         @Override
         public Object getProperty(String property) {
-            return null;
+            return properties.get(property);
         }
     }
 
@@ -355,9 +364,6 @@ public class RepositoryLoader {
 
         private String name;
         private String idColumn;
-        private String multiIdColumn;
-        private String dataType;
-        private String itemType;
         private List<Property> properties;
 
         public Table() {
@@ -386,34 +392,6 @@ public class RepositoryLoader {
 
         public List<Property> getProperties() {
             return properties;
-        }
-
-        public String getMultiIdColumn() {
-            return multiIdColumn;
-        }
-
-        public void setMultiIdColumn(String multiIdColumn) {
-            this.multiIdColumn = multiIdColumn;
-        }
-
-        public String getDataType() {
-            return dataType;
-        }
-
-        public void setDataType(String dataType) {
-            this.dataType = dataType;
-        }
-
-        public String getItemType() {
-            return itemType;
-        }
-
-        public void setItemType(String itemType) {
-            this.itemType = itemType;
-        }
-
-        public void setProperties(List<Property> properties) {
-            this.properties = properties;
         }
     }
 
