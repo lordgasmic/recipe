@@ -140,9 +140,12 @@ public class RepositoryLoader {
         boolean readName = false;
         boolean readIdName = false;
         boolean readProperty = false;
+        boolean readMultiName = false;
+        boolean readDataType = false;
+        boolean readItemType = false;
 
         while (reader.hasNext()) {
-            if (readName && readIdName && readProperty) {
+            if (readName && readIdName && readProperty && readMultiName && readDataType && readItemType) {
                 break;
             }
 
@@ -155,6 +158,12 @@ public class RepositoryLoader {
                 String idColumnName = reader.nextString();
                 table.setIdColumn(idColumnName);
                 readIdName = true;
+            } else if ("multi-column-name".equals(name)) {
+
+            } else if ("data-type".equals(name)) {
+
+            } else if ("item-type".equals(name)) {
+
             } else if ("properties".equals(name)) {
                 reader.beginArray();
 
@@ -346,6 +355,9 @@ public class RepositoryLoader {
 
         private String name;
         private String idColumn;
+        private String multiIdColumn;
+        private String dataType;
+        private String itemType;
         private List<Property> properties;
 
         public Table() {
@@ -374,6 +386,34 @@ public class RepositoryLoader {
 
         public List<Property> getProperties() {
             return properties;
+        }
+
+        public String getMultiIdColumn() {
+            return multiIdColumn;
+        }
+
+        public void setMultiIdColumn(String multiIdColumn) {
+            this.multiIdColumn = multiIdColumn;
+        }
+
+        public String getDataType() {
+            return dataType;
+        }
+
+        public void setDataType(String dataType) {
+            this.dataType = dataType;
+        }
+
+        public String getItemType() {
+            return itemType;
+        }
+
+        public void setItemType(String itemType) {
+            this.itemType = itemType;
+        }
+
+        public void setProperties(List<Property> properties) {
+            this.properties = properties;
         }
     }
 

@@ -6,8 +6,8 @@ package com.lordgasmic.recipe.repository;
 
 public interface RepositoryItem {
 
-    public String getRepositoryId();
-    public String getName();
+    String getRepositoryId();
+    String getName();
 
-    public Object getProperty(String property);
+    Object getProperty(String property);
 }
