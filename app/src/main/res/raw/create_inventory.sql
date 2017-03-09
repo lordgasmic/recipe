@@ -1,6 +1,5 @@
 create table inventory (
-inventory_id varchar(255) primary key,
-item_id varchar(255),
+item_id varchar(255) primary key,
 quantity_on_hand varchar(255),
 uom_on_hand varchar(255),
 par_quantity varchar(255),

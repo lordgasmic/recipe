@@ -12,7 +12,7 @@ class Table {
     private String name;
     private String idColumn;
     private List<Property> properties;
-    private String multiIdColumn;
+    private String multiColumnName;
     private String dataType;
     private String itemType;
 
@@ -45,12 +45,12 @@ class Table {
         return properties;
     }
 
-    public String getMultiIdColumn() {
-        return multiIdColumn;
+    public String getMultiColumnName() {
+        return multiColumnName;
     }
 
-    public void setMultiIdColumn(String multiIdColumn) {
-        this.multiIdColumn = multiIdColumn;
+    public void setMultiColumnName(String multiColumnName) {
+        this.multiColumnName = multiColumnName;
     }
 
     public String getDataType() {

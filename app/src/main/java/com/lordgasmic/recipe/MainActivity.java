@@ -30,7 +30,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
+                System.out.println("making RL");
                 RepositoryLoader rl = new RepositoryLoader(getApplicationContext(), getResources());
+                rl.getItem("100129", "uom");
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

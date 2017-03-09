@@ -1,0 +1,5 @@
+1.
+create tables, add uom values
+
+2.
+create more talbes with more uom values as defaults

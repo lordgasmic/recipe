@@ -42,23 +42,24 @@ public class RepositoryLoader {
         readConfig(resources.openRawResource(R.raw.repository_config));
     }
 
-    protected RepositoryItem getItem(String id, String itemDescriptor) {
+    public RepositoryItem getItem(String id, String itemDescriptor) {
         int index = -1;
         for (ItemDescriptor descriptor : itemDescriptors) {
-            System.out.println(descriptor.getName());
             if (descriptor.getName().equals(itemDescriptor)) {
                 index = itemDescriptors.indexOf(descriptor);
                 break;
             }
         }
 
-        System.out.println(index);
         if (index >= 0) {
             ItemDescriptor item = itemDescriptors.get(index);
             RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor c = db.rawQuery("Select * from uom", null);
+            Cursor c = db.rawQuery("select * from uom", null);
 
+            for (String s : c.getColumnNames()) {
+                System.out.println(s);
+            }
             while (c.moveToNext()) {
                 System.out.println(c.getString(0));
             }
@@ -169,11 +170,17 @@ public class RepositoryLoader {
                 table.setIdColumn(idColumnName);
                 readIdName = true;
             } else if ("multi-column-name".equals(name)) {
-
+                String multiName = reader.nextString();
+                table.setMultiColumnName(multiName);
+                readMultiName = true;
             } else if ("data-type".equals(name)) {
-
+                String dataType = reader.nextString();
+                table.setDataType(dataType);
+                readDataType = true;
             } else if ("item-type".equals(name)) {
-
+                String itemType = reader.nextString();
+                table.setItemType(itemType);
+                readItemType = true;
             } else if ("properties".equals(name)) {
                 reader.beginArray();
 
