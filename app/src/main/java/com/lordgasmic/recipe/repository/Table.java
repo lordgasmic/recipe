@@ -12,6 +12,10 @@ class Table {
     private String name;
     private String idColumn;
     private List<Property> properties;
+    private String multiIdColumn;
+    private String dataType;
+    private String itemType;
+
 
     public Table() {
         properties = new ArrayList<>();
@@ -39,5 +43,29 @@ class Table {
 
     public List<Property> getProperties() {
         return properties;
+    }
+
+    public String getMultiIdColumn() {
+        return multiIdColumn;
+    }
+
+    public void setMultiIdColumn(String multiIdColumn) {
+        this.multiIdColumn = multiIdColumn;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public String getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
     }
 }

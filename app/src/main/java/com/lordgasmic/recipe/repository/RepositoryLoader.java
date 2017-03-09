@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.JsonReader;
 import android.util.JsonToken;
 
+
 import com.lordgasmic.recipe.R;
 
 import java.io.BufferedReader;
@@ -297,132 +298,7 @@ public class RepositoryLoader {
         }
     }
 
-    private class RecipeDbHelper extends SQLiteOpenHelper {
-
-        public static final int DATABASE_VERSION = 1;
-        public static final String DATABASE_NAME = "Recipe.db";
-
-        private static final String CREATE_RECIPE = "";
-        private static final String CREATE_RECIPE_DIRECTION = "";
-        private static final String CREATE_RECIPE_INGREDIENT = "";
-        private static final String CREATE_ITEM = "";
-        private static final String CREATE_INVENTORY = "";
-        private static final String CREATE_UOM = "create table uom (name varchar(255) not null primary key)";
-
-        private static final String INSERT_UOM = "insert into uom values (\"tbl\")";
 
 
-        public RecipeDbHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
 
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(CREATE_UOM);
-            db.execSQL(CREATE_ITEM);
-            db.execSQL(CREATE_INVENTORY);
-            db.execSQL(CREATE_RECIPE);
-            db.execSQL(CREATE_RECIPE_DIRECTION);
-            db.execSQL(CREATE_RECIPE_INGREDIENT);
-
-            db.execSQL(INSERT_UOM);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            onUpgrade(db, oldVersion, newVersion);
-        }
-
-    }
-
-    private class ItemDescriptor {
-
-        private String name;
-        private List<Table> tables;
-
-        public ItemDescriptor() {
-            tables = new ArrayList<>();
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-        public String getName() {
-            return name;
-        }
-
-        public List<Table> getTables() {
-            return tables;
-        }
-
-        public void addTable(Table table) {
-            tables.add(table);
-        }
-    }
-
-    private class Table {
-
-        private String name;
-        private String idColumn;
-        private List<Property> properties;
-
-        public Table() {
-            properties = new ArrayList<>();
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getIdColumn() {
-            return idColumn;
-        }
-
-        public void setIdColumn(String idColumn) {
-            this.idColumn = idColumn;
-        }
-
-        public void addProperty(Property property) {
-            properties.add(property);
-        }
-
-        public List<Property> getProperties() {
-            return properties;
-        }
-    }
-
-    private class Property {
-
-        private String name;
-        private String columnName;
-        private String dataType;
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getColumnName() {
-            return columnName;
-        }
-
-        public void setColumnName(String columnName) {
-            this.columnName = columnName;
-        }
-
-        public String getDataType() {
-            return dataType;
-        }
-
-        public void setDataType(String dataType) {
-            this.dataType = dataType;
-        }
-    }
 }
