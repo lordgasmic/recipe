@@ -116,6 +116,9 @@
                 {
                     "name": "recipe_ingredient_list",
                     "id-column-name": "recipeId",
+                    "multi-column-name": "sequence_number",
+                    "data-type": "list",
+                    "item-type": "recipeIngredient",
                     "properties":  [
                         {
                             "name": "recipeId",
@@ -136,6 +139,11 @@
                             "name": "unitOfMeasure",
                             "column-name": "unit_of_measure",
                             "data-type": "uom"
+                        },
+                        {
+                            "name": "sequence",
+                            "column-name": "sequence_number",
+                            "data-type": "int"
                         }
                     ]
                 },
@@ -144,6 +152,7 @@
                     "id-column-name": "recipeId",
                     "multi-column-name": "sequence_number",
                     "data-type": "list",
+                    "item-type": "recipeDirection",
                     "properties":  [
                         {
                             "name": "recipeId",
@@ -151,8 +160,8 @@
                             "data-type": "string"
                         },
                         {
-                            "name": "directionOrder",
-                            "column-name": "order",
+                            "name": "sequence",
+                            "column-name": "sequence_number",
                             "data-type": "int"
                         },
                         {

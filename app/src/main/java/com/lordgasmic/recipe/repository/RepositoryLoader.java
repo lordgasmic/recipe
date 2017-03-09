@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.JsonReader;
 import android.util.JsonToken;
 
+
 import com.lordgasmic.recipe.R;
 
 import java.io.BufferedReader;
@@ -149,9 +150,12 @@ public class RepositoryLoader {
         boolean readName = false;
         boolean readIdName = false;
         boolean readProperty = false;
+        boolean readMultiName = false;
+        boolean readDataType = false;
+        boolean readItemType = false;
 
         while (reader.hasNext()) {
-            if (readName && readIdName && readProperty) {
+            if (readName && readIdName && readProperty && readMultiName && readDataType && readItemType) {
                 break;
             }
 
@@ -164,6 +168,12 @@ public class RepositoryLoader {
                 String idColumnName = reader.nextString();
                 table.setIdColumn(idColumnName);
                 readIdName = true;
+            } else if ("multi-column-name".equals(name)) {
+
+            } else if ("data-type".equals(name)) {
+
+            } else if ("item-type".equals(name)) {
+
             } else if ("properties".equals(name)) {
                 reader.beginArray();
 
@@ -212,8 +222,6 @@ public class RepositoryLoader {
 
         return property;
     }
-
-
 
     private class RepositoryItemImpl implements RepositoryItem {
         private String repositoryId;
@@ -289,5 +297,8 @@ public class RepositoryLoader {
             return properties;
         }
     }
+
+
+
 
 }
