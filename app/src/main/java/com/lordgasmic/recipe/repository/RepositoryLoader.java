@@ -55,7 +55,7 @@ public class RepositoryLoader {
             ItemDescriptor item = itemDescriptors.get(index);
             RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor c = db.rawQuery("select * from uom", null);
+            Cursor c = db.rawQuery("select * from id_generator", null);
 
             for (String s : c.getColumnNames()) {
                 System.out.println(s);

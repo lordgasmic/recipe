@@ -21,7 +21,7 @@ import java.util.List;
 
 class RecipeDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "Recipe.db";
 
     private final String CREATE_RECIPE;
@@ -64,17 +64,17 @@ class RecipeDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         System.out.println(CREATE_UOM);
-        //db.execSQL(CREATE_ID_GENERATOR);
+        db.execSQL(CREATE_ID_GENERATOR);
 
         db.execSQL(CREATE_UOM);
-        //db.execSQL(CREATE_ITEM);
-        //db.execSQL(CREATE_DIRECTION);
-        //db.execSQL(CREATE_DIRECTION_LIST);
-        //db.execSQL(CREATE_INGREDIENT);
-        //db.execSQL(CREATE_INGREDIENT_LIST);
+        db.execSQL(CREATE_ITEM);
+        db.execSQL(CREATE_DIRECTION);
+        db.execSQL(CREATE_DIRECTION_LIST);
+        db.execSQL(CREATE_INGREDIENT);
+        db.execSQL(CREATE_INGREDIENT_LIST);
 
-        //db.execSQL(CREATE_INVENTORY);
-        //db.execSQL(CREATE_RECIPE);
+        db.execSQL(CREATE_INVENTORY);
+        db.execSQL(CREATE_RECIPE);
 
         execSqlMultiLine(db, INSERT_UOM);
     }
