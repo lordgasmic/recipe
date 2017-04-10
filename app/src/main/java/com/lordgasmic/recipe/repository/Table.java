@@ -15,7 +15,7 @@ class Table {
     private String multiColumnName;
     private String dataType;
     private String itemType;
-
+    private String type;
 
     public Table() {
         properties = new ArrayList<>();
@@ -67,5 +67,30 @@ class Table {
 
     public void setItemType(String itemType) {
         this.itemType = itemType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("name: " + name); sb.append(System.lineSeparator());
+        sb.append("idColumn: " + idColumn); sb.append(System.lineSeparator());
+        sb.append("itemType: " + itemType); sb.append(System.lineSeparator());
+        sb.append("multiColumnName: " + multiColumnName); sb.append(System.lineSeparator());
+        sb.append("dataType: " + dataType); sb.append(System.lineSeparator());
+        sb.append("type: " + type);
+
+        for (Property p : properties) {
+            sb.append("property: " + p.toString());
+            sb.append(System.lineSeparator());
+        }
+
+        return sb.toString();
     }
 }

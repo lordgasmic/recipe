@@ -55,6 +55,35 @@ public class RepositoryLoader {
             ItemDescriptor item = itemDescriptors.get(index);
             RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
+            List<Table> tables = item.getTables();
+            for(Table t : tables) {
+                if ("primary".equals(t.getType())) {
+                    Cursor c = db.rawQuery("select * from " + t.getName() + " where " + t.getIdColumn() + " = " + id, null);
+                    if (c.moveToFirst()) {
+                        do {
+                            MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
+                            mri.setName(item.getName());
+                            mri.setRepositoryId(c.getString(c.getColumnIndex(t.getIdColumn())));
+                            for (Property p: t.getProperties()) {
+                                switch (p.getDataType()) {
+                                    case "string":
+                                        mri.setProperty(p.getName(), c.getString(c.getColumnIndex(p.getColumnName())));
+                                        break;
+                                    case "int":
+                                        mri.setProperty(p.getName(), c.getInt(c.getColumnIndex(p.getColumnName())));
+                                        break;
+                                    case "item":
+                                    case "uom":
+                                }
+                            }
+                        } while(c.moveToNext());
+                    }
+                    else {
+                        return null;
+                    }
+                }
+
+            }
             Cursor c = db.rawQuery("select * from uom", null);
 
             for (String s : c.getColumnNames()) {
@@ -64,11 +93,8 @@ public class RepositoryLoader {
                 System.out.println(c.getString(0));
             }
 
-
             MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
             mri.setName(item.getName());
-
-
 
             return mri.convertToRepositoryItem();
         }
@@ -154,9 +180,10 @@ public class RepositoryLoader {
         boolean readMultiName = false;
         boolean readDataType = false;
         boolean readItemType = false;
+        boolean readType = false;
 
         while (reader.hasNext()) {
-            if (readName && readIdName && readProperty && readMultiName && readDataType && readItemType) {
+            if (readName && readIdName && readProperty && readMultiName && readDataType && readItemType && readType) {
                 break;
             }
 
@@ -181,6 +208,10 @@ public class RepositoryLoader {
                 String itemType = reader.nextString();
                 table.setItemType(itemType);
                 readItemType = true;
+            } else if ("type".equals(name)) {
+                String type = reader.nextString();
+                table.setItemType(type);
+                readType = true;
             } else if ("properties".equals(name)) {
                 reader.beginArray();
 

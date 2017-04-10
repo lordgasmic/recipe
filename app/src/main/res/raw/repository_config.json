@@ -5,11 +5,12 @@
             "table": [
                 {
                     "name": "item",
-                    "id-column-name": "itemId",
+                    "id-column-name": "item_id",
+                    "type": "primary",
                     "properties":  [
                         {
-                            "name": "itemId",
-                            "column-name": "itemId",
+                            "name": "id",
+                            "column-name": "item_id",
                             "data-type": "string"
                         },
                         {
@@ -27,6 +28,7 @@
                 {
                     "name": "uom",
                     "id-column-name": "short_name",
+                    "type": "primary",
                     "properties":  [
                         {
                             "name": "short_name",
@@ -47,11 +49,12 @@
             "table": [
                 {
                     "name": "direction",
-                    "id-column-name": "recipe_direction_id",
+                    "id-column-name": "direction_id",
+                    "type": "primary",
                     "properties":  [
                         {
-                            "name": "recipeDirectionId",
-                            "column-name": "recipe_direction_id",
+                            "name": "id",
+                            "column-name": "direction_id",
                             "data-type": "string"
                         },
                         {
@@ -68,17 +71,23 @@
             "table": [
                 {
                     "name": "ingredient",
-                    "id-column-name": "recipe_ingredient_id",
+                    "id-column-name": "ingredient_id",
+                    "type": "primary",
                     "properties":  [
                         {
-                            "name": "recipeIngredientId",
-                            "column-name": "recipe_ingredient_id",
+                            "name": "id",
+                            "column-name": "ingredient_id",
                             "data-type": "string"
                         },
                         {
-                            "name": "itemId",
-                            "column-name": "itemId",
+                            "name": "item",
+                            "column-name": "item_id",
                             "data-type": "item"
+                        },
+                        {
+                            "name": "quantity",
+                            "column-name": "quantity",
+                            "data-type": "string"
                         },
                         {
                             "name": "uom",
@@ -94,11 +103,12 @@
             "table": [
                 {
                     "name": "recipe",
-                    "id-column-name": "recipeId",
+                    "id-column-name": "recipe_id",
+                    "type": "primary",
                     "properties":  [
                         {
                             "name": "id",
-                            "column-name": "recipeId",
+                            "column-name": "recipe_id",
                             "data-type": "string"
                         },
                         {
@@ -114,31 +124,22 @@
                     ]
                 },
                 {
-                    "name": "recipe_ingredient_list",
-                    "id-column-name": "recipeId",
+                    "name": "ingredient_list",
+                    "id-column-name": "recipe_id",
                     "multi-column-name": "sequence_number",
                     "data-type": "list",
-                    "item-type": "recipeIngredient",
+                    "item-type": "ingredient",
+                    "type": "auxilary",
                     "properties":  [
                         {
                             "name": "recipeId",
-                            "column-name": "recipeId",
+                            "column-name": "recipe_id",
                             "data-type": "string"
                         },
                         {
-                            "name": "itemId",
-                            "column-name": "itemId",
+                            "name": "ingredientId",
+                            "column-name": "ingredient_id",
                             "data-type": "string"
-                        },
-                        {
-                            "name": "quantity",
-                            "column-name": "quantity",
-                            "data-type": "string"
-                        },
-                        {
-                            "name": "unitOfMeasure",
-                            "column-name": "unit_of_measure",
-                            "data-type": "uom"
                         },
                         {
                             "name": "sequence",
@@ -148,26 +149,27 @@
                     ]
                 },
                 {
-                    "name": "recipe_direction_list",
-                    "id-column-name": "recipeId",
+                    "name": "direction_list",
+                    "id-column-name": "recipe_id",
                     "multi-column-name": "sequence_number",
                     "data-type": "list",
-                    "item-type": "recipeDirection",
+                    "item-type": "direction",
+                    "type": "auxilary",
                     "properties":  [
                         {
                             "name": "recipeId",
-                            "column-name": "recipeId",
+                            "column-name": "recipe_id",
+                            "data-type": "string"
+                        },
+                        {
+                            "name": "directionId",
+                            "column-name": "direction_id",
                             "data-type": "string"
                         },
                         {
                             "name": "sequence",
                             "column-name": "sequence_number",
                             "data-type": "int"
-                        },
-                        {
-                            "name": "direction",
-                            "column-name": "direction",
-                            "data-type": "string"
                         }
                     ]
                 }
@@ -178,11 +180,12 @@
             "table": [
                 {
                     "name": "inventory",
-                    "id-column-name": "itemId",
+                    "id-column-name": "item_id",
+                    "type": "primary",
                     "properties":  [
                         {
                             "name": "item",
-                            "column-name": "itemId",
+                            "column-name": "item_id",
                             "data-type": "item"
                         },
                         {
