@@ -33,4 +33,15 @@ class Property {
     public void setDataType(String dataType) {
         this.dataType = dataType;
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Property:");sb.append(System.lineSeparator());
+        sb.append("  name: " + name); sb.append(System.lineSeparator());
+        sb.append("  columnName: " + columnName); sb.append(System.lineSeparator());
+        sb.append("  dataType: " + dataType); sb.append(System.lineSeparator());
+
+        return sb.toString();
+    }
 }

@@ -30,4 +30,17 @@ class ItemDescriptor {
     public void addTable(Table table) {
         tables.add(table);
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("ItemDescriptor:");sb.append(System.lineSeparator());
+        sb.append("name: " + name);sb.append(System.lineSeparator());
+
+        for(Table t : tables) {
+            sb.append("table: " + t.toString());sb.append(System.lineSeparator());
+        }
+
+        return sb.toString();
+    }
 }

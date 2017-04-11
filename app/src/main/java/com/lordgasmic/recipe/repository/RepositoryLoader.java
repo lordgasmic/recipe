@@ -42,20 +42,45 @@ public class RepositoryLoader {
         readConfig(resources.openRawResource(R.raw.repository_config));
     }
 
-    public RepositoryItem getItem(String id, String itemDescriptor) {
-        int index = -1;
+    public ItemDescriptor findItemDescriptor(String itemDescriptor) {
         for (ItemDescriptor descriptor : itemDescriptors) {
             if (descriptor.getName().equals(itemDescriptor)) {
-                index = itemDescriptors.indexOf(descriptor);
-                break;
+                return descriptor;
             }
         }
 
-        if (index >= 0) {
-            ItemDescriptor item = itemDescriptors.get(index);
+        return null;
+    }
+
+    public RepositoryItem getItem(String id, String itemDescriptor) {
+        ItemDescriptor item = findItemDescriptor(itemDescriptor);
+
+        if (item != null) {
             RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor c = db.rawQuery("select * from id_generator", null);
+            List<Table> tables = item.getTables();
+            for(Table t : tables) {
+                if ("primary".equals(t.getType())) {
+                    Cursor c = db.rawQuery("select * from " + t.getName() + " where " + t.getIdColumn() + " = " + id, null);
+                    if (c.moveToFirst()) {
+                        do {
+                            MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
+                            mri.setName(item.getName());
+                            mri.setRepositoryId(c.getString(c.getColumnIndex(t.getIdColumn())));
+                            for (Property p: t.getProperties()) {
+                                setProperty(mri,c,db,p);
+                            }
+                        } while(c.moveToNext());
+
+                        c.close();
+                    }
+                    else {
+                        return null;
+                    }
+                }
+
+            }
+            Cursor c = db.rawQuery("select * from uom", null);
 
             for (String s : c.getColumnNames()) {
                 System.out.println(s);
@@ -64,16 +89,48 @@ public class RepositoryLoader {
                 System.out.println(c.getString(0));
             }
 
-
             MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
             mri.setName(item.getName());
-
-
 
             return mri.convertToRepositoryItem();
         }
 
         return null;
+    }
+
+    private MutableRepositoryItem setProperty(MutableRepositoryItem mri, Cursor cursor, SQLiteDatabase db, Property property) {
+        switch (property.getDataType()) {
+            case "string":
+                mri.setProperty(property.getName(), cursor.getString(cursor.getColumnIndex(property.getColumnName())));
+                break;
+            case "int":
+                mri.setProperty(property.getName(), cursor.getInt(cursor.getColumnIndex(property.getColumnName())));
+                break;
+            case "item":
+                Cursor itemCursor = db.rawQuery("select * from item where item_id = " + property.getColumnName(), null);
+                MutableRepositoryItemImpl itemItem = new MutableRepositoryItemImpl();
+                ItemDescriptor itemDesc = findItemDescriptor("item");
+                for (Property p : itemDesc.getTables().get(0).getProperties()) {
+                    setProperty(itemItem, itemCursor,db, p);
+                }
+                mri.setProperty(property.getName(), itemItem);
+                itemCursor.close();
+                break;
+            case "uom":
+                Cursor uomCursor = db.rawQuery("select * from uom where short_name = " + property.getColumnName(), null);
+                MutableRepositoryItemImpl uomItem = new MutableRepositoryItemImpl();
+                ItemDescriptor uomDesc = findItemDescriptor("uom");
+                for (Property p : uomDesc.getTables().get(0).getProperties()) {
+                    setProperty(uomItem, uomCursor,db, p);
+                }
+                mri.setProperty(property.getName(), uomItem);
+                uomCursor.close();
+                break;
+            default:
+                throw new IllegalArgumentException("Unable to find data type for " + property.getDataType());
+        }
+
+       return mri;
     }
 
     private void readConfig(InputStream inputStream) {
@@ -154,9 +211,10 @@ public class RepositoryLoader {
         boolean readMultiName = false;
         boolean readDataType = false;
         boolean readItemType = false;
+        boolean readType = false;
 
         while (reader.hasNext()) {
-            if (readName && readIdName && readProperty && readMultiName && readDataType && readItemType) {
+            if (readName && readIdName && readProperty && readMultiName && readDataType && readItemType && readType) {
                 break;
             }
 
@@ -181,6 +239,10 @@ public class RepositoryLoader {
                 String itemType = reader.nextString();
                 table.setItemType(itemType);
                 readItemType = true;
+            } else if ("type".equals(name)) {
+                String type = reader.nextString();
+                table.setItemType(type);
+                readType = true;
             } else if ("properties".equals(name)) {
                 reader.beginArray();
 
