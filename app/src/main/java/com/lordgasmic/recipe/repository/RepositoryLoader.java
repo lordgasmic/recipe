@@ -10,6 +10,10 @@ import android.util.JsonToken;
 
 
 import com.lordgasmic.recipe.R;
+import com.lordgasmic.recipe.constants.DataType;
+import com.lordgasmic.recipe.constants.IngredientConstants;
+import com.lordgasmic.recipe.constants.ItemConstants;
+import com.lordgasmic.recipe.constants.UomConstants;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +37,7 @@ public class RepositoryLoader {
     private List<ItemDescriptor> itemDescriptors;
     private Context context;
     private Resources resources;
+    private SQLiteDatabase db;
 
     public RepositoryLoader(Context context, Resources resources) {
         repository = new Repository(this);
@@ -57,40 +63,38 @@ public class RepositoryLoader {
 
         if (item != null) {
             RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            List<Table> tables = item.getTables();
-            for(Table t : tables) {
-                if ("primary".equals(t.getType())) {
-                    Cursor c = db.rawQuery("select * from " + t.getName() + " where " + t.getIdColumn() + " = " + id, null);
-                    if (c.moveToFirst()) {
-                        do {
-                            MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
-                            mri.setName(item.getName());
-                            mri.setRepositoryId(c.getString(c.getColumnIndex(t.getIdColumn())));
-                            for (Property p: t.getProperties()) {
-                                setProperty(mri,c,db,p);
-                            }
-                        } while(c.moveToNext());
+            db = dbHelper.getReadableDatabase();
+            Map<String, List<Table>> tables = item.getTables();
 
-                        c.close();
-                    }
-                    else {
-                        return null;
-                    }
-                }
-
+            List<Table> primaryTable = tables.get("primary");
+            if (primaryTable == null || primaryTable.isEmpty()) {
+                throw new IllegalStateException("No primary table found for itemDescriptor: " + item.getName());
             }
-            Cursor c = db.rawQuery("select * from uom", null);
-
-            for (String s : c.getColumnNames()) {
-                System.out.println(s);
-            }
-            while (c.moveToNext()) {
-                System.out.println(c.getString(0));
+            if (primaryTable.size() > 1) {
+                throw new IllegalStateException("Multiple primary tables found for itemDescriptor: " + item.getName());
             }
 
+            Table t = primaryTable.get(0);
+            Cursor c = db.rawQuery("select * from " + t.getName() + " where " + t.getIdColumn() + " = " + id, null);
             MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
-            mri.setName(item.getName());
+            if (c.moveToFirst()) {
+                    mri.setName(item.getName());
+                    mri.setRepositoryId(c.getString(c.getColumnIndex(t.getIdColumn())));
+                    for (Property p: t.getProperties()) {
+                        setProperty(mri, c, p);
+                    }
+                c.close();
+            }
+            else {
+                return null;
+            }
+
+            List<Table> auxilaryTables = tables.get("auxilary");
+            if (auxilaryTables != null) {
+                for (Table auxTable : auxilaryTables) {
+                    processAuxilaryTable(auxTable, mri);
+                }
+            }
 
             return mri.convertToRepositoryItem();
         }
@@ -98,39 +102,45 @@ public class RepositoryLoader {
         return null;
     }
 
-    private MutableRepositoryItem setProperty(MutableRepositoryItem mri, Cursor cursor, SQLiteDatabase db, Property property) {
+    private void setProperty(MutableRepositoryItem mri, Cursor cursor, Property property) {
         switch (property.getDataType()) {
-            case "string":
+            case STRING:
                 mri.setProperty(property.getName(), cursor.getString(cursor.getColumnIndex(property.getColumnName())));
                 break;
-            case "int":
+            case INT:
                 mri.setProperty(property.getName(), cursor.getInt(cursor.getColumnIndex(property.getColumnName())));
                 break;
-            case "item":
-                Cursor itemCursor = db.rawQuery("select * from item where item_id = " + property.getColumnName(), null);
-                MutableRepositoryItemImpl itemItem = new MutableRepositoryItemImpl();
-                ItemDescriptor itemDesc = findItemDescriptor("item");
-                for (Property p : itemDesc.getTables().get(0).getProperties()) {
-                    setProperty(itemItem, itemCursor,db, p);
-                }
-                mri.setProperty(property.getName(), itemItem);
-                itemCursor.close();
+            case ITEM:
+                RepositoryItem itemItem =  getItem(cursor.getString(cursor.getColumnIndex(property.getColumnName())), ItemConstants.ITEM_DESCRIPTOR);
+                mri.setProperty(ItemConstants.ITEM_DESCRIPTOR, itemItem);
                 break;
-            case "uom":
-                Cursor uomCursor = db.rawQuery("select * from uom where short_name = " + property.getColumnName(), null);
-                MutableRepositoryItemImpl uomItem = new MutableRepositoryItemImpl();
-                ItemDescriptor uomDesc = findItemDescriptor("uom");
-                for (Property p : uomDesc.getTables().get(0).getProperties()) {
-                    setProperty(uomItem, uomCursor,db, p);
-                }
-                mri.setProperty(property.getName(), uomItem);
-                uomCursor.close();
+            case UOM:
+                RepositoryItem uomItem =  getItem(cursor.getString(cursor.getColumnIndex(property.getColumnName())), UomConstants.ITEM_DESCRIPTOR);
+                mri.setProperty(UomConstants.ITEM_DESCRIPTOR, uomItem);
                 break;
             default:
                 throw new IllegalArgumentException("Unable to find data type for " + property.getDataType());
         }
+    }
 
-       return mri;
+    private void processAuxilaryTable(Table auxTable, MutableRepositoryItemImpl mutableRepositoryItem) {
+        switch (auxTable.getDataType()) {
+            case LIST:
+                List<RepositoryItem> items = new ArrayList<>();
+                Cursor c = db.rawQuery("select * from " + auxTable.getName() + " where " + auxTable.getIdColumn() + " = " + mutableRepositoryItem.repositoryId, null);
+                if (c.moveToFirst()) {
+                    do {
+                        Property auxProperty = auxTable.getProperties().get(0);
+                        RepositoryItem auxItem = getItem(c.getString(c.getColumnIndex(auxProperty.getColumnName())), auxTable.getItemType());
+                        items.add(c.getInt(c.getColumnIndex(auxTable.getMultiColumnName())), auxItem);
+                    } while (c.moveToNext());
+
+                    c.close();
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("DataType not implemented yet for: " + auxTable.getDataType());
+        }
     }
 
     private void readConfig(InputStream inputStream) {
@@ -189,6 +199,8 @@ public class RepositoryLoader {
                 while (reader.hasNext() && reader.peek() == JsonToken.BEGIN_OBJECT) {
                     reader.beginObject();
 
+                    Table table = readTable(reader);
+
                     itemDescriptor.addTable(readTable(reader));
 
                     reader.endObject();
@@ -233,7 +245,7 @@ public class RepositoryLoader {
                 readMultiName = true;
             } else if ("data-type".equals(name)) {
                 String dataType = reader.nextString();
-                table.setDataType(dataType);
+                table.setDataType(DataType.fromValue(dataType));
                 readDataType = true;
             } else if ("item-type".equals(name)) {
                 String itemType = reader.nextString();
@@ -284,7 +296,7 @@ public class RepositoryLoader {
                 readColumn = true;
             } else if ("data-type".equals(name)) {
                 String dataType = reader.nextString();
-                property.setDataType(dataType);
+                property.setDataType(DataType.fromValue(dataType));
                 readData = false;
             }
         }
@@ -316,6 +328,25 @@ public class RepositoryLoader {
         @Override
         public Object getProperty(String property) {
             return properties.get(property);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("RepositoryItem: ");
+            sb.append("name: ");
+            sb.append(name);
+            sb.append(" RepositoryId: ");
+            sb.append(repositoryId);
+
+            Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                sb.append(" " + entry.getKey() + ": ");
+                sb.append(entry.getValue());
+            }
+            return sb.toString();
         }
     }
 

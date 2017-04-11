@@ -1,7 +1,10 @@
 package com.lordgasmic.recipe.repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bruce on 3/2/17.
@@ -10,10 +13,10 @@ import java.util.List;
 class ItemDescriptor {
 
     private String name;
-    private List<Table> tables;
+    private Map<String, List<Table>> tables;
 
     public ItemDescriptor() {
-        tables = new ArrayList<>();
+        tables = new HashMap<>();
     }
 
     public void setName(String name) {
@@ -23,12 +26,20 @@ class ItemDescriptor {
         return name;
     }
 
-    public List<Table> getTables() {
+    public Map<String, List<Table>> getTables() {
         return tables;
     }
 
     public void addTable(Table table) {
-        tables.add(table);
+        String type = table.getType();
+
+        List<Table> tableList = tables.get(type);
+        if (tableList == null) {
+            tableList = new ArrayList<>();
+        }
+
+        tableList.add(table);
+        tables.put(type, tableList);
     }
 
     public String toString() {
@@ -37,8 +48,11 @@ class ItemDescriptor {
         sb.append("ItemDescriptor:");sb.append(System.lineSeparator());
         sb.append("name: " + name);sb.append(System.lineSeparator());
 
-        for(Table t : tables) {
-            sb.append("table: " + t.toString());sb.append(System.lineSeparator());
+        for(List<Table> tableList : tables.values()) {
+            for(Table t : tableList) {
+                sb.append("table: " + t.toString());
+                sb.append(System.lineSeparator());
+            }
         }
 
         return sb.toString();

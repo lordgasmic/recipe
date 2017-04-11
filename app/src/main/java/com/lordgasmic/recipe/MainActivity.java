@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.lordgasmic.recipe.repository.RepositoryItem;
 import com.lordgasmic.recipe.repository.RepositoryLoader;
 
 public class MainActivity extends AppCompatActivity
@@ -32,7 +33,8 @@ public class MainActivity extends AppCompatActivity
 
                 System.out.println("making RL");
                 RepositoryLoader rl = new RepositoryLoader(getApplicationContext(), getResources());
-                rl.getItem("100129", "uom");
+                RepositoryItem item = rl.getItem("tsp", "uom");
+                System.out.println(item.toString());
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

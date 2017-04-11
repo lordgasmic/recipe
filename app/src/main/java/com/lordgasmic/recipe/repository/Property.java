@@ -1,5 +1,7 @@
 package com.lordgasmic.recipe.repository;
 
+import com.lordgasmic.recipe.constants.DataType;
+
 /**
  * Created by bruce on 3/2/17.
  */
@@ -8,7 +10,7 @@ class Property {
 
     private String name;
     private String columnName;
-    private String dataType;
+    private DataType dataType;
 
     public void setName(String name) {
         this.name = name;
@@ -26,11 +28,11 @@ class Property {
         this.columnName = columnName;
     }
 
-    public String getDataType() {
+    public DataType getDataType() {
         return dataType;
     }
 
-    public void setDataType(String dataType) {
+    public void setDataType(DataType dataType) {
         this.dataType = dataType;
     }
 

@@ -1,5 +1,7 @@
 package com.lordgasmic.recipe.repository;
 
+import com.lordgasmic.recipe.constants.DataType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ class Table {
     private String idColumn;
     private List<Property> properties;
     private String multiColumnName;
-    private String dataType;
+    private DataType dataType;
     private String itemType;
     private String type;
 
@@ -53,11 +55,11 @@ class Table {
         this.multiColumnName = multiColumnName;
     }
 
-    public String getDataType() {
+    public DataType getDataType() {
         return dataType;
     }
 
-    public void setDataType(String dataType) {
+    public void setDataType(DataType dataType) {
         this.dataType = dataType;
     }
 

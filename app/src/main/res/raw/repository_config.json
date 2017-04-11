@@ -132,19 +132,9 @@
                     "type": "auxilary",
                     "properties":  [
                         {
-                            "name": "recipeId",
-                            "column-name": "recipe_id",
-                            "data-type": "string"
-                        },
-                        {
                             "name": "ingredientId",
                             "column-name": "ingredient_id",
                             "data-type": "string"
-                        },
-                        {
-                            "name": "sequence",
-                            "column-name": "sequence_number",
-                            "data-type": "int"
                         }
                     ]
                 },
@@ -157,19 +147,9 @@
                     "type": "auxilary",
                     "properties":  [
                         {
-                            "name": "recipeId",
-                            "column-name": "recipe_id",
-                            "data-type": "string"
-                        },
-                        {
                             "name": "directionId",
                             "column-name": "direction_id",
                             "data-type": "string"
-                        },
-                        {
-                            "name": "sequence",
-                            "column-name": "sequence_number",
-                            "data-type": "int"
                         }
                     ]
                 }
