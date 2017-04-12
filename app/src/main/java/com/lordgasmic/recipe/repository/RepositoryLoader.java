@@ -4,19 +4,15 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.JsonReader;
 import android.util.JsonToken;
 
 
 import com.lordgasmic.recipe.R;
 import com.lordgasmic.recipe.constants.DataType;
-import com.lordgasmic.recipe.constants.IngredientConstants;
 import com.lordgasmic.recipe.constants.ItemConstants;
 import com.lordgasmic.recipe.constants.UomConstants;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,7 +37,7 @@ public class RepositoryLoader {
 
     public RepositoryLoader(Context context, Resources resources) {
         repository = new Repository(this);
-        itemDescriptors = new ArrayList<ItemDescriptor>();
+        itemDescriptors = new ArrayList<>();
         this.context = context;
         this.resources = resources;
 
@@ -137,6 +133,7 @@ public class RepositoryLoader {
 
                     c.close();
                 }
+                mutableRepositoryItem.setProperty(auxTable.getItemType(), items);
                 break;
             default:
                 throw new UnsupportedOperationException("DataType not implemented yet for: " + auxTable.getDataType());
@@ -308,7 +305,7 @@ public class RepositoryLoader {
         private String name;
         private Map<String, Object> properties;
 
-        public RepositoryItemImpl(MutableRepositoryItemImpl mri) {
+        private RepositoryItemImpl(MutableRepositoryItemImpl mri) {
             repositoryId = mri.getRepositoryId();
             name = mri.getName();
             properties = mri.getProperties();
@@ -342,9 +339,12 @@ public class RepositoryLoader {
             Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, Object> entry = it.next();
-                sb.append(" " + entry.getKey() + ": ");
+                sb.append(" ");
+                sb.append(entry.getKey());
+                sb.append(": ");
                 sb.append(entry.getValue());
             }
+
             return sb.toString();
         }
     }
@@ -354,11 +354,11 @@ public class RepositoryLoader {
         private String name;
         private Map<String, Object> properties;
 
-        public MutableRepositoryItemImpl() {
+        private MutableRepositoryItemImpl() {
             properties = new HashMap<>();
         }
 
-        public RepositoryItem convertToRepositoryItem() {
+        private RepositoryItem convertToRepositoryItem() {
             return new RepositoryItemImpl(this);
         }
 
