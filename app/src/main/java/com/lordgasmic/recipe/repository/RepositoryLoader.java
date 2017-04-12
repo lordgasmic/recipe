@@ -75,7 +75,7 @@ public class RepositoryLoader {
             }
 
             Table t = primaryTable.get(0);
-            Cursor c = db.rawQuery("select * from " + t.getName() + " where " + t.getIdColumn() + " = " + id, null);
+            Cursor c = db.rawQuery("select * from " + t.getName() + " where " + t.getIdColumn() + " = " + "'" + id + "'", null);
             MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
             if (c.moveToFirst()) {
                     mri.setName(item.getName());
@@ -199,8 +199,6 @@ public class RepositoryLoader {
                 while (reader.hasNext() && reader.peek() == JsonToken.BEGIN_OBJECT) {
                     reader.beginObject();
 
-                    Table table = readTable(reader);
-
                     itemDescriptor.addTable(readTable(reader));
 
                     reader.endObject();
@@ -253,7 +251,7 @@ public class RepositoryLoader {
                 readItemType = true;
             } else if ("type".equals(name)) {
                 String type = reader.nextString();
-                table.setItemType(type);
+                table.setType(type);
                 readType = true;
             } else if ("properties".equals(name)) {
                 reader.beginArray();
@@ -289,6 +287,7 @@ public class RepositoryLoader {
             String name = reader.nextName();
             if ("name".equals(name)) {
                 String mName = reader.nextString();
+                property.setName(mName);
                 readName = true;
             } else if ("column-name".equals(name)) {
                 String columnName = reader.nextString();
@@ -297,7 +296,7 @@ public class RepositoryLoader {
             } else if ("data-type".equals(name)) {
                 String dataType = reader.nextString();
                 property.setDataType(DataType.fromValue(dataType));
-                readData = false;
+                readData = true;
             }
         }
 

@@ -31,12 +31,12 @@
                     "type": "primary",
                     "properties":  [
                         {
-                            "name": "short_name",
+                            "name": "shortName",
                             "column-name": "short_name",
                             "data-type": "string"
                         },
                         {
-                            "name": "long_name",
+                            "name": "longName",
                             "column-name": "long_name",
                             "data-type": "string"
                         }
