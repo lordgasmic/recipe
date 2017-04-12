@@ -1,5 +1,7 @@
 package com.lordgasmic.recipe.repository;
 
+import android.app.Application;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,9 @@ public class Repository {
             }
         }
 
+        System.out.println("item not found for " + itemDescriptor + " " + id);
+
+
         RepositoryItem item = repositoryLoader.getItem(id, itemDescriptor);
         if (item != null) {
             items.add(item);
@@ -45,9 +50,9 @@ public class Repository {
 
     }
 
-    protected void loadRepository(List<String> itemDescriptors) {
-        for (String itemDescriptor : itemDescriptors) {
-            repoMap.put(itemDescriptor, new ArrayList<RepositoryItem>());
+    protected void loadRepository(List<ItemDescriptor> itemDescriptors) {
+        for (ItemDescriptor itemDescriptor : itemDescriptors) {
+            repoMap.put(itemDescriptor.getName(), new ArrayList<RepositoryItem>());
         }
     }
 }

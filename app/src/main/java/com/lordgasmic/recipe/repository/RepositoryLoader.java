@@ -41,7 +41,14 @@ public class RepositoryLoader {
         this.context = context;
         this.resources = resources;
 
+        RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
+        db = dbHelper.getReadableDatabase();
+
         readConfig(resources.openRawResource(R.raw.repository_config));
+
+        repository.loadRepository(itemDescriptors);
+
+        initializeIdGenerator();
     }
 
     public ItemDescriptor findItemDescriptor(String itemDescriptor) {
@@ -58,8 +65,7 @@ public class RepositoryLoader {
         ItemDescriptor item = findItemDescriptor(itemDescriptor);
 
         if (item != null) {
-            RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
-            db = dbHelper.getReadableDatabase();
+
             Map<String, List<Table>> tables = item.getTables();
 
             List<Table> primaryTable = tables.get("primary");
@@ -138,6 +144,18 @@ public class RepositoryLoader {
             default:
                 throw new UnsupportedOperationException("DataType not implemented yet for: " + auxTable.getDataType());
         }
+    }
+
+    private void saveItem(RepositoryItem repositoryItem) {
+
+    }
+
+    private String getId() {
+        return null;
+    }
+
+    private void initializeIdGenerator() {
+
     }
 
     private void readConfig(InputStream inputStream) {
@@ -396,5 +414,8 @@ public class RepositoryLoader {
             return properties;
         }
     }
-    
+
+    public Repository getRepository() {
+        return repository;
+    }
 }

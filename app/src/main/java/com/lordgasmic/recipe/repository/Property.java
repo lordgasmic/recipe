@@ -3,6 +3,8 @@ package com.lordgasmic.recipe.repository;
 import com.lordgasmic.recipe.constants.DataType;
 
 /**
+ * A property mapping between item descriptor and column
+ *
  * Created by bruce on 3/2/17.
  */
 
