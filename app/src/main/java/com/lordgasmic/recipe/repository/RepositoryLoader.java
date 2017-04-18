@@ -1,5 +1,6 @@
 package com.lordgasmic.recipe.repository;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -7,11 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.JsonReader;
 import android.util.JsonToken;
 
-
 import com.lordgasmic.recipe.R;
 import com.lordgasmic.recipe.constants.DataType;
+import com.lordgasmic.recipe.constants.IdGeneratorConstants;
 import com.lordgasmic.recipe.constants.ItemConstants;
 import com.lordgasmic.recipe.constants.UomConstants;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +27,8 @@ import java.util.Map;
 
 
 /**
+ * Main repository loader.  The layer between the Repository and the database.
+ *
  * Created by bruce on 2/11/17.
  */
 
@@ -31,18 +36,14 @@ public class RepositoryLoader {
 
     private Repository repository;
     private List<ItemDescriptor> itemDescriptors;
-    private Context context;
-    private Resources resources;
     private SQLiteDatabase db;
 
     public RepositoryLoader(Context context, Resources resources) {
         repository = new Repository(this);
         itemDescriptors = new ArrayList<>();
-        this.context = context;
-        this.resources = resources;
 
         RecipeDbHelper dbHelper = new RecipeDbHelper(context, resources);
-        db = dbHelper.getReadableDatabase();
+        db = dbHelper.getWritableDatabase();
 
         readConfig(resources.openRawResource(R.raw.repository_config));
 
@@ -98,8 +99,10 @@ public class RepositoryLoader {
                 }
             }
 
+            System.out.println(getId("uom"));
             return mri.convertToRepositoryItem();
         }
+
 
         return null;
     }
@@ -150,12 +153,63 @@ public class RepositoryLoader {
 
     }
 
-    private String getId() {
-        return null;
+    private String getId(String itemDescriptor) {
+        String[] where = { itemDescriptor };
+        String retVal = "-1";
+        int idSpaceInt = -1;
+        try (Cursor cursor = db.query(IdGeneratorConstants.TABLE_NAME, null,IdGeneratorConstants.GET_ID_WHERE, where, null, null, null)) {
+            while (cursor.moveToNext()) {
+                StringBuilder sb = new StringBuilder();
+                String prefix = cursor.getString(cursor.getColumnIndex(IdGeneratorConstants.PREFIX));
+                String suffix = cursor.getString(cursor.getColumnIndex(IdGeneratorConstants.SUFFIX));
+                String idSpace = cursor.getString(cursor.getColumnIndex(IdGeneratorConstants.ID_SPACE));
+
+                if (StringUtils.isNotEmpty(prefix)) {
+                    sb.append(prefix);
+                }
+
+                if (StringUtils.isNotEmpty(idSpace)) {
+                    sb.append(idSpace);
+                    idSpaceInt = Integer.parseInt(idSpace);
+                }
+
+                if (StringUtils.isNotEmpty(suffix)) {
+                    sb.append(suffix);
+                }
+
+                retVal = sb.toString();
+            }
+        }
+
+        idSpaceInt++;
+        ContentValues cv = new ContentValues();
+        cv.put(IdGeneratorConstants.ID_SPACE,  idSpaceInt);
+        db.update(IdGeneratorConstants.TABLE_NAME, cv, IdGeneratorConstants.GET_ID_WHERE, where);
+
+        return retVal;
     }
 
     private void initializeIdGenerator() {
+        List<String> idSpaceNames = new ArrayList<>();
+        List<String> addSpaceNames = new ArrayList<>();
+        try (Cursor cursor = db.rawQuery("select id_space_name from id_generator", null)) {
+            while (cursor.moveToNext()) {
+                idSpaceNames.add(cursor.getString(0));
+            }
+        }
 
+        for (ItemDescriptor itemDescriptor : itemDescriptors) {
+            if (!idSpaceNames.contains(itemDescriptor.getName())) {
+                addSpaceNames.add(itemDescriptor.getName());
+            }
+        }
+
+        for (String s : addSpaceNames) {
+            ContentValues cv = new ContentValues();
+            cv.put(IdGeneratorConstants.ID_SPACE_NAME, s);
+            cv.put(IdGeneratorConstants.ID_SPACE, "1");
+            db.insert(IdGeneratorConstants.TABLE_NAME, null, cv);
+        }
     }
 
     private void readConfig(InputStream inputStream) {

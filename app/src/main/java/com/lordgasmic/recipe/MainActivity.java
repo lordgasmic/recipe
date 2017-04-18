@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.lordgasmic.recipe.constants.ProjectConstants;
 import com.lordgasmic.recipe.constants.UomConstants;
 import com.lordgasmic.recipe.repository.Repository;
+import com.lordgasmic.recipe.repository.RepositoryApplication;
 import com.lordgasmic.recipe.repository.RepositoryException;
 import com.lordgasmic.recipe.repository.RepositoryItem;
 import com.lordgasmic.recipe.repository.RepositoryLoader;
@@ -35,8 +36,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RepositoryLoader rl = new RepositoryLoader(getApplicationContext(), getResources());
-                Repository repository = rl.getRepository();
+                RepositoryApplication repositoryApplication = (RepositoryApplication) getApplication();
+                Repository repository = repositoryApplication.getRepository();
                 try {
                     RepositoryItem item = repository.getItem("tsp", UomConstants.ITEM_DESCRIPTOR);
                     System.out.println(item.toString());
