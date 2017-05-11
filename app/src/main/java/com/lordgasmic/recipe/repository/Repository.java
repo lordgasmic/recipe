@@ -1,6 +1,7 @@
 package com.lordgasmic.recipe.repository;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,11 +23,7 @@ public class Repository {
     }
 
     public RepositoryItem getItem(String id, String itemDescriptor) throws RepositoryException {
-        ArrayList<RepositoryItem> items = (ArrayList<RepositoryItem>) repoMap.get(itemDescriptor);
-
-        if (items == null) {
-            throw new RepositoryException("Item Descriptor not found for: " + itemDescriptor);
-        }
+        List<RepositoryItem> items = getRepositoryItems(itemDescriptor);
 
         for (RepositoryItem item : items) {
             if (id.equals(item.getRepositoryId())) {
@@ -46,6 +43,14 @@ public class Repository {
         return null;
     }
 
+    public List<RepositoryItem> getAllItemsByDescriptor(String itemDescriptor) {
+        List<RepositoryItem> repositoryItems = repositoryLoader.getAllItemsByDescriptor(itemDescriptor);
+
+        repoMap.put(itemDescriptor, repositoryItems);
+
+        return repositoryItems;
+    }
+
     public void deleteItem(String id, String itemDescriptor) {
 
     }
@@ -54,5 +59,14 @@ public class Repository {
         for (ItemDescriptor itemDescriptor : itemDescriptors) {
             repoMap.put(itemDescriptor.getName(), new ArrayList<RepositoryItem>());
         }
+    }
+
+    private List<RepositoryItem> getRepositoryItems(String itemDescriptor) throws RepositoryException {
+        List<RepositoryItem> items = (ArrayList<RepositoryItem>) repoMap.get(itemDescriptor);
+
+        if (items == null) {
+            throw new RepositoryException("Item Descriptor not found for: " + itemDescriptor);
+        }
+        return items;
     }
 }

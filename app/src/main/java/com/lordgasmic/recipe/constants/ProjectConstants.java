@@ -9,4 +9,5 @@ package com.lordgasmic.recipe.constants;
 public class ProjectConstants {
 
     public static final String FLAG_NEW_RECIPE_CREATED = "flagNewRecipeCreated";
+    public static final String FLAG_OPEN_RECIPE = "flagOpenRecipe";
 }

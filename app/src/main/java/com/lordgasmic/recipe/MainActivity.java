@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.style.ReplacementSpan;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -116,8 +117,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
             System.out.println("new recipe nav");
             Intent intent = new Intent(MainActivity.this, NewRecipeActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.nav_listRecipes) {
+            System.out.println("list recipes nav");
+            Intent intent = new Intent(MainActivity.this, ListRecipesActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

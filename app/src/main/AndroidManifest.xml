@@ -28,6 +28,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lordgasmic.recipe.MainActivity" />
         </activity>
+        <activity android:name=".ListRecipesActivity"></activity>
+        <activity android:name=".OpenRecipeActivity"></activity>
     </application>
 
 </manifest>

@@ -11,7 +11,10 @@ public class RepositoryApplication extends Application {
 
     private static RepositoryLoader repositoryLoader;
 
-    public RepositoryApplication() {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
         repositoryLoader = new RepositoryLoader(getApplicationContext(), getResources());
     }
 

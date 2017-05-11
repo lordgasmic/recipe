@@ -107,6 +107,51 @@ public class RepositoryLoader {
         return null;
     }
 
+    public List<RepositoryItem> getAllItemsByDescriptor(String itemDescriptor) {
+        List<RepositoryItem> repositoryItems = new ArrayList<>();
+
+        ItemDescriptor item = findItemDescriptor(itemDescriptor);
+
+        if (item != null) {
+
+            Map<String, List<Table>> tables = item.getTables();
+
+            List<Table> primaryTable = tables.get("primary");
+            if (primaryTable == null || primaryTable.isEmpty()) {
+                throw new IllegalStateException("No primary table found for itemDescriptor: " + item.getName());
+            }
+            if (primaryTable.size() > 1) {
+                throw new IllegalStateException("Multiple primary tables found for itemDescriptor: " + item.getName());
+            }
+
+            Table t = primaryTable.get(0);
+            Cursor c = db.rawQuery("select * from " + t.getName(), null);
+            try {
+                while (c.moveToNext()) {
+                    MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
+                    mri.setName(item.getName());
+                    mri.setRepositoryId(c.getString(c.getColumnIndex(t.getIdColumn())));
+                    for (Property p : t.getProperties()) {
+                        setProperty(mri, c, p);
+                    }
+
+                    List<Table> auxilaryTables = tables.get("auxilary");
+                    if (auxilaryTables != null) {
+                        for (Table auxTable : auxilaryTables) {
+                            processAuxilaryTable(auxTable, mri);
+                        }
+                    }
+
+                    repositoryItems.add(mri.convertToRepositoryItem());
+                }
+            } finally {
+                c.close();
+            }
+        }
+
+        return repositoryItems;
+    }
+
     private void setProperty(MutableRepositoryItem mri, Cursor cursor, Property property) {
         switch (property.getDataType()) {
             case STRING:
@@ -400,24 +445,7 @@ public class RepositoryLoader {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("RepositoryItem: ");
-            sb.append("name: ");
-            sb.append(name);
-            sb.append(" RepositoryId: ");
-            sb.append(repositoryId);
-
-            Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, Object> entry = it.next();
-                sb.append(" ");
-                sb.append(entry.getKey());
-                sb.append(": ");
-                sb.append(entry.getValue());
-            }
-
-            return sb.toString();
+            return repositoryId;
         }
     }
 
