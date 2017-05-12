@@ -38,7 +38,8 @@ public class ListRecipesActivity extends Activity {
 
                 System.out.println("open recipe nav");
                 Intent intent = new Intent(ListRecipesActivity.this, OpenRecipeActivity.class);
-                intent.putExtra(ProjectConstants.FLAG_OPEN_RECIPE,item.getRepositoryId());
+                intent.putExtra(ProjectConstants.FLAG_OPEN_RECIPE, item.getRepositoryId());
+                intent.putExtra(ProjectConstants.FLAG_ITEM_DESCRIPTOR, (String) item.getProperty("itemDescriptor"));
                 startActivity(intent);
             }
         });

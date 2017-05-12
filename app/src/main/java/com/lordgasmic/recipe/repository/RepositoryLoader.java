@@ -425,7 +425,7 @@ public class RepositoryLoader {
         private RepositoryItemImpl(MutableRepositoryItemImpl mri) {
             repositoryId = mri.getRepositoryId();
             name = mri.getName();
-            properties = mri.getProperties();
+            properties = mri.getAllProperties();
         }
 
         @Override
@@ -441,6 +441,11 @@ public class RepositoryLoader {
         @Override
         public Object getProperty(String property) {
             return properties.get(property);
+        }
+
+        @Override
+        public Map<String, Object> getAllProperties() {
+            return properties;
         }
 
         @Override
@@ -492,9 +497,11 @@ public class RepositoryLoader {
             return properties.get(property);
         }
 
-        public Map<String, Object> getProperties() {
+        @Override
+        public Map<String, Object> getAllProperties() {
             return properties;
         }
+
     }
 
     public Repository getRepository() {

@@ -6,4 +6,28 @@
     android:layout_height="match_parent"
     tools:context="com.lordgasmic.recipe.OpenRecipeActivity">
 
+    <EditText
+        android:id="@+id/txt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="none" />
+
+    <!-- List Divider -->
+    <View android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="?android:attr/listDivider" />
+
+    <!-- ListView (grid_layout) -->
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <ListView
+            android:id="@+id/lst_properties"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+        </ListView>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
