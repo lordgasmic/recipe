@@ -13,7 +13,10 @@ import com.lordgasmic.recipe.repository.Repository;
 import com.lordgasmic.recipe.repository.RepositoryApplication;
 import com.lordgasmic.recipe.repository.RepositoryItem;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ListRecipesActivity extends Activity {
 
@@ -31,15 +34,29 @@ public class ListRecipesActivity extends Activity {
 
         listView.setAdapter(adapter);
 
+        for (RepositoryItem repositoryItem : repositoryItems) {
+            System.out.println(repositoryItem.getRepositoryId());
+
+            Iterator<Map.Entry<String, Object>> it = repositoryItem.getAllProperties().entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                System.out.println("key: " + entry.getKey());
+                System.out.println("value: " + entry.getValue().toString());
+            }
+
+            System.out.println();
+        }
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
                 RepositoryItem item = (RepositoryItem) parent.getItemAtPosition(position);
 
                 System.out.println("open recipe nav");
+                System.out.println(item.getName());
                 Intent intent = new Intent(ListRecipesActivity.this, OpenRecipeActivity.class);
                 intent.putExtra(ProjectConstants.FLAG_OPEN_RECIPE, item.getRepositoryId());
-                intent.putExtra(ProjectConstants.FLAG_ITEM_DESCRIPTOR, (String) item.getProperty("itemDescriptor"));
+                intent.putExtra(ProjectConstants.FLAG_ITEM_DESCRIPTOR, item.getName());
                 startActivity(intent);
             }
         });

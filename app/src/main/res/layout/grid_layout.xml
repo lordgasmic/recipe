@@ -5,15 +5,15 @@
     android:orientation="horizontal">
 
     <EditText
-        android:id="@+id/txt_value"
-        android:layout_width="50dp"
+        android:id="@+id/item1"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="none" />
 
     <EditText
-        android:id="@+id/txt_property"
-        android:layout_width="50dp"
+        android:id="@+id/item2"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="none" />

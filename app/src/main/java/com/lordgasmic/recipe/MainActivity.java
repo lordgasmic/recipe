@@ -73,6 +73,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView. O
                 myToast.show();
                 extras.remove(ProjectConstants.FLAG_NEW_RECIPE_CREATED);
             }
+
+            String exception = extras.getString(ProjectConstants.FLAG_EXCEPTION);
+            if (exception != null) {
+                Toast myToast = Toast.makeText(getApplicationContext(), exception, Toast.LENGTH_SHORT);
+                myToast.show();
+                extras.remove(ProjectConstants.FLAG_EXCEPTION);
+            }
+
         }
     }
 

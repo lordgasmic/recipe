@@ -1,6 +1,7 @@
 package com.lordgasmic.recipe;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -49,19 +50,21 @@ public class OpenRecipeActivity extends Activity {
                 while (it.hasNext()) {
                     Map.Entry<String, Object> entry = it.next();
                     Map<String, String> datum = new HashMap<>();
-                    datum.put("property", entry.getKey());
-                    datum.put("value", entry.getValue().toString());
+                    datum.put("item1", entry.getKey());
+                    datum.put("item2", entry.getValue().toString());
                     data.add(datum);
                 }
 
-                String[] header = {"property", "value"};
-                int[] to = {R.id.txt_property, R.id.txt_value};
+                String[] header = {"item1", "item2"};
+                int[] to = {R.id.item1, R.id.item2};
 
                 SimpleAdapter adapter = new SimpleAdapter(this, data, R.layout.grid_layout, header, to);
                 listView.setAdapter(adapter);
             }
             catch (RepositoryException e) {
-
+                Intent intent = new Intent(OpenRecipeActivity.this, MainActivity.class);
+                intent.putExtra(ProjectConstants.FLAG_EXCEPTION, "RepositoryException occured when trying to get " + itemDescriptor + " with id of " + repositoryId);
+                startActivity(intent);
             }
         }
 

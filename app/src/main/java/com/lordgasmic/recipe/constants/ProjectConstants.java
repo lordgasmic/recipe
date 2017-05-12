@@ -11,4 +11,5 @@ public class ProjectConstants {
     public static final String FLAG_NEW_RECIPE_CREATED = "flagNewRecipeCreated";
     public static final String FLAG_OPEN_RECIPE = "flagOpenRecipe";
     public static final String FLAG_ITEM_DESCRIPTOR = "flagItemDescriptor";
+    public static final String FLAG_EXCEPTION = "flagException";
 }
