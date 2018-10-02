@@ -4,6 +4,6 @@ recipeAndroid.iml
 captures
 externalNativeBuild
 build
-.idea/*
+.idea/
 .gradle
 recipeAndroid.zip
