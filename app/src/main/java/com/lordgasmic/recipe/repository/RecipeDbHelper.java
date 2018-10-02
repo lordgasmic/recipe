@@ -63,7 +63,6 @@ class RecipeDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        System.out.println(CREATE_UOM);
         db.execSQL(CREATE_ID_GENERATOR);
 
         db.execSQL(CREATE_UOM);
