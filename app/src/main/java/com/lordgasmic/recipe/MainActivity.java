@@ -24,6 +24,8 @@ import com.lordgasmic.recipe.repository.RepositoryException;
 import com.lordgasmic.recipe.repository.RepositoryItem;
 import com.lordgasmic.recipe.repository.RepositoryLoader;
 
+import java.io.File;
+
 public class MainActivity extends AbstractActivity {
 
     @Override
@@ -73,6 +75,8 @@ public class MainActivity extends AbstractActivity {
             }
 
         }
+
+        File file = new File(getBaseContext().getFilesDir(),ProjectConstants.INTERNAL_STORAGE_DIR);
     }
 
     @Override
