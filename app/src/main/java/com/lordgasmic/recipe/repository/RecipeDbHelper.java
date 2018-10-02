@@ -18,7 +18,6 @@ import java.util.List;
 /**
  * Created by atguser on 3/2/17.
  */
-
 class RecipeDbHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 3;

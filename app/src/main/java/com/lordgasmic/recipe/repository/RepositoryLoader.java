@@ -31,7 +31,6 @@ import java.util.Map;
  *
  * Created by bruce on 2/11/17.
  */
-
 public class RepositoryLoader {
 
     private Repository repository;
