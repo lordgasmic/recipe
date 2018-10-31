@@ -14,6 +14,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by atguser on 3/2/17.
@@ -21,7 +24,7 @@ import java.util.List;
 
 class RecipeDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Recipe.db";
 
     private final String CREATE_RECIPE;
@@ -98,23 +101,13 @@ class RecipeDbHelper extends SQLiteOpenHelper {
     }
 
     private List<String> readSqlMultiLine(InputStream inputStream) throws IOException {
-        List<String> commands = new ArrayList<>();
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-        String line;
-        while ((line = br.readLine()) != null) {
-            commands.add(line);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))){
+            return br.lines().collect(toList());
         }
-        br.close();
-
-        return commands;
     }
 
     private void execSqlMultiLine(SQLiteDatabase db, List<String> commands) {
-        for (String cmd : commands) {
-            db.execSQL(cmd);
-        }
+        commands.forEach(db::execSQL);
     }
 
 }

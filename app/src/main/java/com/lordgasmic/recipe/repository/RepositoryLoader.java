@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,6 @@ import java.util.Map;
  *
  * Created by bruce on 2/11/17.
  */
-
 public class RepositoryLoader {
 
     private Repository repository;
@@ -125,8 +123,8 @@ public class RepositoryLoader {
             }
 
             Table t = primaryTable.get(0);
-            Cursor c = db.rawQuery("select * from " + t.getName(), null);
-            try {
+
+            try (Cursor c = db.rawQuery("select * from " + t.getName(), null)) {
                 while (c.moveToNext()) {
                     MutableRepositoryItemImpl mri = new MutableRepositoryItemImpl();
                     mri.setName(item.getName());
@@ -144,8 +142,6 @@ public class RepositoryLoader {
 
                     repositoryItems.add(mri.convertToRepositoryItem());
                 }
-            } finally {
-                c.close();
             }
         }
 

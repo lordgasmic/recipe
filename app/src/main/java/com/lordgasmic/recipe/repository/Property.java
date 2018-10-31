@@ -10,7 +10,7 @@ import lombok.Data;
  * Created by bruce on 3/2/17.
  */
 @Data
-class Property {
+public class Property {
 
     private String name;
     private String columnName;

@@ -62,7 +62,7 @@ public class Repository {
     }
 
     private List<RepositoryItem> getRepositoryItems(String itemDescriptor) throws RepositoryException {
-        List<RepositoryItem> items = (ArrayList<RepositoryItem>) repoMap.get(itemDescriptor);
+        List<RepositoryItem> items = repoMap.get(itemDescriptor);
 
         if (items == null) {
             throw new RepositoryException("Item Descriptor not found for: " + itemDescriptor);

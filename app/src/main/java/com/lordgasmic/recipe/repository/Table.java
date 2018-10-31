@@ -11,7 +11,7 @@ import lombok.Data;
  * Created by bruce on 3/2/17.
  */
 @Data
-class Table {
+public class Table {
 
     private String name;
     private String idColumn;

@@ -73,7 +73,6 @@ public class MainActivity extends AbstractActivity {
                 myToast.show();
                 getIntent().removeExtra(ProjectConstants.FLAG_EXCEPTION);
             }
-
         }
 
         File file = new File(getBaseContext().getFilesDir(),ProjectConstants.INTERNAL_STORAGE_DIR);
