@@ -21,7 +21,6 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by atguser on 3/2/17.
  */
-
 class RecipeDbHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
