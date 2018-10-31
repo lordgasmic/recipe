@@ -8,3 +8,4 @@ build
 .idea/
 .gradle
 recipeAndroid.zip
+app/app.iml
