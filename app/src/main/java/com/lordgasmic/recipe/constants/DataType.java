@@ -3,14 +3,13 @@ package com.lordgasmic.recipe.constants;
 /**
  * Created by atguser on 4/11/17.
  */
-
 public enum DataType {
 
     STRING("string"), INT("int"), LIST("list"), ITEM("item"), UOM("uom");
 
     private String value;
 
-    private DataType(String value) {
+    DataType(String value) {
         this.value = value;
     }
 

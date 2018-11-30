@@ -35,12 +35,12 @@ public class OpenRecipeActivity extends Activity {
             String repositoryId = extras.getString(ProjectConstants.FLAG_OPEN_RECIPE);
             String itemDescriptor = extras.getString(ProjectConstants.FLAG_ITEM_DESCRIPTOR);
 
-            TextView txtId = (TextView) findViewById(R.id.txt_id);
+            TextView txtId = findViewById(R.id.txt_id);
             txtId.setText(repositoryId);
 
             Repository repository = ((RepositoryApplication) getApplication()).getRepository();
 
-            ListView listView = (ListView) findViewById(R.id.lst_properties);
+            ListView listView = findViewById(R.id.lst_properties);
 
             try {
                 RepositoryItem repositoryItem = repository.getItem(repositoryId, itemDescriptor);
@@ -67,7 +67,6 @@ public class OpenRecipeActivity extends Activity {
                 startActivity(intent);
             }
         }
-
 
     }
 }

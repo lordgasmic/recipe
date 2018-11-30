@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * Created by bruce on 3/2/17.
  */
-
 class ItemDescriptor {
 
     private String name;

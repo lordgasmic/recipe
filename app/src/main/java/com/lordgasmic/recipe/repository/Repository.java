@@ -1,8 +1,5 @@
 package com.lordgasmic.recipe.repository;
 
-import android.app.Application;
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +28,6 @@ public class Repository {
         }
 
         System.out.println("item not found for " + itemDescriptor + " " + id);
-
 
         RepositoryItem item = repositoryLoader.getItem(id, itemDescriptor);
         if (item != null) {

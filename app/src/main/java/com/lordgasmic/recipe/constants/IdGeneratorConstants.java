@@ -5,7 +5,6 @@ package com.lordgasmic.recipe.constants;
  *
  * Created by neo on 4/13/17.
  */
-
 public class IdGeneratorConstants {
 
     public static final String TABLE_NAME = "id_generator";

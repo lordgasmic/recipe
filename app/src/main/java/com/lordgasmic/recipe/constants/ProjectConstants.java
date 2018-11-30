@@ -5,7 +5,6 @@ package com.lordgasmic.recipe.constants;
  *
  * Created by atguser on 4/12/17.
  */
-
 public class ProjectConstants {
 
     public static final String INTERNAL_STORAGE_DIR = "com.lordgasmic.recipe";

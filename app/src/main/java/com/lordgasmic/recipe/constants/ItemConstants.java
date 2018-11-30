@@ -3,7 +3,6 @@ package com.lordgasmic.recipe.constants;
 /**
  * Created by nwellman on 4/11/17.
  */
-
 public final class ItemConstants {
 
     public static final String ITEM_DESCRIPTOR = "item";

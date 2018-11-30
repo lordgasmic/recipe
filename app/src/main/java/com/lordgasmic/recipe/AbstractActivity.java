@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 /**
  * Created by atguser on 5/17/17.
  */
-
 public abstract class AbstractActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     protected void setupMenu() {

@@ -17,8 +17,8 @@ public class NewRecipeActivity extends Activity {
     }
 
     public void newRecipe(View view) {
-        EditText txtName = (EditText) findViewById(R.id.txtName);
-        EditText txtDescription = (EditText) findViewById(R.id.txtDescription);
+        EditText txtName = findViewById(R.id.txtName);
+        EditText txtDescription = findViewById(R.id.txtDescription);
 
         Intent intent = new Intent(NewRecipeActivity.this, MainActivity.class);
         intent.putExtra(ProjectConstants.FLAG_NEW_RECIPE_CREATED, txtName.getText() + " has been created");
