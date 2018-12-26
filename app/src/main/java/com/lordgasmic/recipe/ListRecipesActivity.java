@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.lordgasmic.recipe.constants.ProjectConstants;
+import com.lordgasmic.recipe.constants.RecipeConstants;
 import com.lordgasmic.recipe.repository.Repository;
 import com.lordgasmic.recipe.repository.RepositoryApplication;
 import com.lordgasmic.recipe.repository.RepositoryItem;
@@ -20,17 +21,21 @@ import java.util.List;
 
 public class ListRecipesActivity extends AbstractActivity {
 
+    private Repository repository;
+
+    public ListRecipesActivity() {
+         repository = ((RepositoryApplication) getApplication()).getRepository();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_recipes);
 
-        Repository repository = ((RepositoryApplication) getApplication()).getRepository();
+        ListView listView = findViewById(R.id.lst_recipe);
 
-        ListView listView = (ListView) findViewById(R.id.lst_recipe);
-
-        List<RepositoryItem> repositoryItems = repository.getAllItemsByDescriptor("uom");
-        ArrayAdapter<RepositoryItem> adapter = new ArrayAdapter<RepositoryItem>(this, android.R.layout.simple_list_item_1, repositoryItems);
+        List<RepositoryItem> repositoryItems = repository.getAllItemsByDescriptor(RecipeConstants.ITEM_DESCRIPTOR);
+        ArrayAdapter<RepositoryItem> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, repositoryItems);
 
         listView.setAdapter(adapter);
 
@@ -81,7 +86,7 @@ public class ListRecipesActivity extends AbstractActivity {
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

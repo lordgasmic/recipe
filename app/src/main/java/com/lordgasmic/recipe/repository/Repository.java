@@ -47,7 +47,7 @@ public class Repository {
     }
 
     public void deleteItem(String id, String itemDescriptor) {
-
+        throw new UnsupportedOperationException();
     }
 
     protected void loadRepository(List<ItemDescriptor> itemDescriptors) {
