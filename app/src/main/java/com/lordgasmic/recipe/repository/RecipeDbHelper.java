@@ -24,15 +24,12 @@ class RecipeDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Recipe.db";
 
     private final String CREATE_RECIPE;
-    private final String CREATE_DIRECTION;
-    private final String CREATE_DIRECTION_LIST;
-    private final String CREATE_INGREDIENT;
-    private final String CREATE_INGREDIENT_LIST;
+    private final String CREATE_RECIPE_STEPS;
+    private final String CREATE_RECIPE_INGREDIENT;
     private final String CREATE_ITEM;
     private final String CREATE_INVENTORY;
-    private final String CREATE_UOM;
     private final String CREATE_ID_GENERATOR;
-    private final List<String> INSERT_UOM;
+    private final String INSERT_ID_GENERATOR;
     private final List<String> DROP_ALL;
 
     public RecipeDbHelper(Context context, Resources resources) {
@@ -41,17 +38,14 @@ class RecipeDbHelper extends SQLiteOpenHelper {
         try {
             CREATE_ID_GENERATOR = readSql(resources.openRawResource(R.raw.create_id_generator));
 
-            CREATE_UOM = readSql(resources.openRawResource(R.raw.create_uom));
             CREATE_ITEM = readSql(resources.openRawResource(R.raw.create_item));
-            CREATE_DIRECTION = readSql(resources.openRawResource(R.raw.create_direction));
-            CREATE_DIRECTION_LIST = readSql(resources.openRawResource(R.raw.create_direction_list));
-            CREATE_INGREDIENT = readSql(resources.openRawResource(R.raw.create_ingredient));
-            CREATE_INGREDIENT_LIST = readSql(resources.openRawResource(R.raw.create_ingredient_list));
+            CREATE_RECIPE_STEPS = readSql(resources.openRawResource(R.raw.create_recipe_steps));
+            CREATE_RECIPE_INGREDIENT = readSql(resources.openRawResource(R.raw.create_recipe_ingredient));
 
             CREATE_RECIPE = readSql(resources.openRawResource(R.raw.create_recipe));
             CREATE_INVENTORY = readSql(resources.openRawResource(R.raw.create_inventory));
 
-            INSERT_UOM = readSqlMultiLine(resources.openRawResource(R.raw.insert_uom));
+            INSERT_ID_GENERATOR= readSql(resources.openRawResource(R.raw.insert_id_generator));
 
             DROP_ALL = readSqlMultiLine(resources.openRawResource(R.raw.drop_all));
         }
@@ -64,17 +58,14 @@ class RecipeDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_ID_GENERATOR);
 
-        db.execSQL(CREATE_UOM);
         db.execSQL(CREATE_ITEM);
-        db.execSQL(CREATE_DIRECTION);
-        db.execSQL(CREATE_DIRECTION_LIST);
-        db.execSQL(CREATE_INGREDIENT);
-        db.execSQL(CREATE_INGREDIENT_LIST);
+        db.execSQL(CREATE_RECIPE_STEPS);
+        db.execSQL(CREATE_RECIPE_INGREDIENT);
 
         db.execSQL(CREATE_INVENTORY);
         db.execSQL(CREATE_RECIPE);
 
-        execSqlMultiLine(db, INSERT_UOM);
+        db.execSQL(INSERT_ID_GENERATOR);
     }
 
     @Override

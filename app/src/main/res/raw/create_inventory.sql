@@ -1,7 +1,9 @@
 create table inventory (
 item_id varchar(255) primary key,
-quantity_on_hand varchar(255),
-uom_on_hand varchar(255),
-par_quantity varchar(255),
-par_uom varchar(255)
+on_hand_quantity_whole varchar(255),
+on_hand_quantity_code varchar(255),
+on_hand_uom_code varchar(255),
+par_quantity_whole varchar(255),
+par_quantity_code varchar(255),
+par_uom_code varchar(255)
 );

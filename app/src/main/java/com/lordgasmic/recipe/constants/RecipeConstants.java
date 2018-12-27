@@ -5,5 +5,7 @@ package com.lordgasmic.recipe.constants;
  */
 public final class RecipeConstants {
 
-    public static final String ITEM_DESCRIPTOR = "recipe";
+    public static final String ID_SPACE_NAME = "recipe";
+    public static final String PROP_ID = "recipe_id";
+    public static final String PROP_NAME ="name";
 }

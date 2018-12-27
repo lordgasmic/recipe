@@ -1,9 +1,6 @@
-drop table if exists direction;
-drop table if exists direction_list;
-drop table if exists ingredient;
-drop table if exists ingredient_list;
-drop table if exists id_generator;
+drop table if exists recipe_steps;
+drop table if exists recipe_ingredient;
 drop table if exists inventory;
 drop table if exists item;
 drop table if exists recipe;
-drop table if exists uom;
+drop table if exists id_generator;
