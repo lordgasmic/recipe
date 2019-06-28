@@ -7,15 +7,11 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.lordgasmic.recipe.constants.ProjectConstants;
-import com.lordgasmic.recipe.repository.Repository;
-import com.lordgasmic.recipe.repository.RepositoryApplication;
+import com.lordgasmic.recipe.persistence.RecipePersistence;
 
 public class NewRecipeActivity extends Activity {
 
-    private Repository repository;
-
     public NewRecipeActivity() {
-        repository = ((RepositoryApplication) getApplication()).getRepository();
     }
 
     @Override
@@ -32,7 +28,6 @@ public class NewRecipeActivity extends Activity {
         intent.putExtra(ProjectConstants.FLAG_NEW_RECIPE_CREATED, txtName.getText() + " has been created");
         startActivity(intent);
 
-        repository.
     }
 
 }

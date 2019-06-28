@@ -4,27 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.text.style.ReplacementSpan;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.lordgasmic.recipe.constants.ProjectConstants;
-import com.lordgasmic.recipe.constants.UomConstants;
-import com.lordgasmic.recipe.repository.Repository;
-import com.lordgasmic.recipe.repository.RepositoryApplication;
-import com.lordgasmic.recipe.repository.RepositoryException;
-import com.lordgasmic.recipe.repository.RepositoryItem;
-import com.lordgasmic.recipe.repository.RepositoryLoader;
+import com.lordgasmic.recipe.persistence.RecipePersistence;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class MainActivity extends AbstractActivity {
 
@@ -34,22 +25,14 @@ public class MainActivity extends AbstractActivity {
         setContentView(R.layout.activity_main);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RepositoryApplication repositoryApplication = (RepositoryApplication) getApplication();
-                Repository repository = repositoryApplication.getRepository();
-                try {
-                    RepositoryItem item = repository.getItem("tsp", UomConstants.ITEM_DESCRIPTOR);
-                    System.out.println(item.toString());
-                }
-                catch (RepositoryException e) {
-                    e.printStackTrace();
-                }
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
+
+
+
+        RecipePersistence persistence = (RecipePersistence) getApplication();
+        Toast myToast = Toast.makeText(getApplicationContext(), "" +                persistence.getRecipes().get(0), Toast.LENGTH_SHORT);
+        myToast.show();
 
         setupMenu();
     }
@@ -115,10 +98,9 @@ public class MainActivity extends AbstractActivity {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if(id == R.id.nav_main) {
+        if (id == R.id.nav_main) {
             // do nothing
-        }
-         else if (id == R.id.nav_newRecipe) {
+        } else if (id == R.id.nav_newRecipe) {
             System.out.println("new recipe nav");
             Intent intent = new Intent(MainActivity.this, NewRecipeActivity.class);
             startActivity(intent);

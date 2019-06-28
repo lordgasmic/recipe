@@ -3,7 +3,7 @@
     package="com.lordgasmic.recipe">
 
     <application
-        android:name=".repository.RepositoryApplication"
+        android:name=".persistence.RecipePersistence"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,13 +28,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lordgasmic.recipe.MainActivity" />
         </activity>
-        <activity android:name=".ListRecipesActivity"
+        <activity
+            android:name=".ListRecipesActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".OpenRecipeActivity"
+        <activity
+            android:name=".OpenRecipeActivity"
             android:parentActivityName=".ListRecipesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -2,7 +2,7 @@ package com.lordgasmic.recipe.constants;
 
 /**
  * Project wide constants
- *
+ * <p>
  * Created by atguser on 4/12/17.
  */
 public class ProjectConstants {
